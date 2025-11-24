@@ -1,7 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { emailService } from '../services/email.service';
-import { whatsappService } from '../services/whatsapp.service';
 import { createApplicationSchema, updateApplicationStatusSchema } from '../schemas/application.schema';
 
 const router = Router();
@@ -35,19 +34,6 @@ router.post('/', async (req: Request, res: Response) => {
       to: validatedData.email,
       subject: 'Application Received - PuppyHub USA',
       html: confirmationEmail,
-      type: 'application_confirmation',
-    });
-
-    // Send WhatsApp confirmation message
-    const whatsappMessage = whatsappService.generateApplicationConfirmationMessage(
-      validatedData.firstName,
-      puppyName,
-      application.id
-    );
-
-    await whatsappService.sendMessage({
-      to: validatedData.mobileNumber,
-      body: whatsappMessage,
       type: 'application_confirmation',
     });
 
@@ -175,18 +161,6 @@ router.patch('/:id/status', async (req: Request, res: Response) => {
       to: application.email,
       subject: `Application ${validatedData.status} - PuppyHub USA`,
       html: statusEmail,
-      type: 'status_update',
-    });
-
-    // Send WhatsApp status update message
-    const whatsappStatusMessage = whatsappService.generateStatusUpdateMessage(
-      application.firstName,
-      validatedData.status as 'approved' | 'rejected'
-    );
-
-    await whatsappService.sendMessage({
-      to: application.mobileNumber,
-      body: whatsappStatusMessage,
       type: 'status_update',
     });
 

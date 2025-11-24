@@ -14,9 +14,6 @@ interface EnvConfig {
   ADMIN_SECRET_KEY: string;
   ADMIN_EMAIL: string;
   FRONTEND_URL: string;
-  TWILIO_ACCOUNT_SID: string;
-  TWILIO_AUTH_TOKEN: string;
-  TWILIO_WHATSAPP_NUMBER: string;
 }
 
 function validateEnv(): EnvConfig {
@@ -30,9 +27,6 @@ function validateEnv(): EnvConfig {
     'ADMIN_SECRET_KEY',
     'ADMIN_EMAIL',
     'FRONTEND_URL',
-    'TWILIO_ACCOUNT_SID',
-    'TWILIO_AUTH_TOKEN',
-    'TWILIO_WHATSAPP_NUMBER',
   ];
 
   const missing = required.filter((key) => !process.env[key]);
@@ -53,9 +47,6 @@ function validateEnv(): EnvConfig {
     ADMIN_SECRET_KEY: process.env.ADMIN_SECRET_KEY!,
     ADMIN_EMAIL: process.env.ADMIN_EMAIL!,
     FRONTEND_URL: process.env.FRONTEND_URL!,
-    TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID!,
-    TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN!,
-    TWILIO_WHATSAPP_NUMBER: process.env.TWILIO_WHATSAPP_NUMBER!,
   };
 }
 
