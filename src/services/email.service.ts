@@ -63,14 +63,25 @@ class EmailService {
     }
   }
 
-  generateApplicationConfirmationEmail(applicantName: string, applicationId: string): string {
+  generateApplicationConfirmationEmail(
+    applicantName: string,
+    puppyName: string,
+    applicationId: string
+  ): string {
     return `
-      <h2>Application Received</h2>
+      <h2>Application Received ✓</h2>
       <p>Dear ${applicantName},</p>
-      <p>Thank you for submitting your adoption application to PuppyHub USA!</p>
+      <p>Thank you for submitting your adoption application for <strong>${puppyName}</strong> to PuppyHub USA!</p>
       <p>We have received your application and will review it within 4-5 business days.</p>
       <p><strong>Application ID:</strong> ${applicationId}</p>
-      <p>You will receive an email update once your application has been reviewed.</p>
+      <h3>What Happens Next:</h3>
+      <ol>
+        <li>Our team will thoroughly review your application</li>
+        <li>You'll receive an email with our decision within 4-5 business days</li>
+        <li>If approved, our support team will guide you through the payment process</li>
+        <li>Once payment is complete, you'll be on our waiting list for available puppies</li>
+      </ol>
+      <p>If you have any questions, our support team is here to help!</p>
       <p>Best regards,<br/>PuppyHub USA Team</p>
     `;
   }
@@ -97,6 +108,38 @@ class EmailService {
       ${rejectionReason ? `<p><strong>Reason:</strong> ${rejectionReason}</p>` : ''}
       <p>We encourage you to reapply in the future.</p>
       <p>Best regards,<br/>PuppyHub USA Team</p>
+    `;
+  }
+
+  generateAdminNotificationEmail(
+    applicantName: string,
+    applicantEmail: string,
+    applicantPhone: string,
+    puppyName: string,
+    paymentMethod: string,
+    applicationId: string
+  ): string {
+    return `
+      <h2>New Application Submitted</h2>
+      <p>A new adoption application has been received.</p>
+      
+      <h3>Applicant Information:</h3>
+      <ul>
+        <li><strong>Name:</strong> ${applicantName}</li>
+        <li><strong>Email:</strong> ${applicantEmail}</li>
+        <li><strong>Phone:</strong> ${applicantPhone}</li>
+      </ul>
+      
+      <h3>Application Details:</h3>
+      <ul>
+        <li><strong>Application ID:</strong> ${applicationId}</li>
+        <li><strong>Puppy/Breed Applied For:</strong> ${puppyName}</li>
+        <li><strong>Preferred Payment Method:</strong> ${paymentMethod}</li>
+      </ul>
+      
+      <p><a href="${process.env.FRONTEND_URL}/admin/applications/${applicationId}" style="background-color: #0066cc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Review Application</a></p>
+      
+      <p>Best regards,<br/>PuppyHub USA System</p>
     `;
   }
 }

@@ -49,6 +49,10 @@ export const createApplicationSchema = z.object({
   }),
   optInCommunications: z.boolean().default(false),
   welcomeCall: z.boolean().default(false),
+
+  // Payment Info
+  paymentMethod: z.enum(['creditCard', 'bankTransfer', 'crypto']).optional(),
+  depositAmount: z.number().default(300),
 });
 
 export type CreateApplicationInput = z.infer<typeof createApplicationSchema>;

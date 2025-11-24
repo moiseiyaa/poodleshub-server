@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { emailService } from '../services/email.service';
+import { whatsappService } from '../services/whatsapp.service';
 import { createApplicationSchema, updateApplicationStatusSchema } from '../schemas/application.schema';
 
 const router = Router();
@@ -20,9 +21,13 @@ router.post('/', async (req: Request, res: Response) => {
       },
     });
 
+    // Get puppy name if available
+    const puppyName = validatedData.breedChoices?.[0]?.breed || 'our puppies';
+
     // Send confirmation email
     const confirmationEmail = emailService.generateApplicationConfirmationEmail(
       validatedData.firstName,
+      puppyName,
       application.id
     );
 
@@ -31,6 +36,42 @@ router.post('/', async (req: Request, res: Response) => {
       subject: 'Application Received - PuppyHub USA',
       html: confirmationEmail,
       type: 'application_confirmation',
+    });
+
+    // Send WhatsApp confirmation message
+    const whatsappMessage = whatsappService.generateApplicationConfirmationMessage(
+      validatedData.firstName,
+      puppyName,
+      application.id
+    );
+
+    await whatsappService.sendMessage({
+      to: validatedData.mobileNumber,
+      body: whatsappMessage,
+      type: 'application_confirmation',
+    });
+
+    // Send admin notification email
+    const paymentMethodMap: Record<string, string> = {
+      creditCard: 'Credit Card',
+      bankTransfer: 'Bank Transfer',
+      crypto: 'Cryptocurrency',
+    };
+    const paymentMethod = paymentMethodMap[validatedData.paymentMethod || ''] || 'Not specified';
+    const adminEmail = emailService.generateAdminNotificationEmail(
+      validatedData.firstName,
+      validatedData.email,
+      validatedData.mobileNumber,
+      puppyName,
+      paymentMethod,
+      application.id
+    );
+
+    await emailService.sendEmail({
+      to: process.env.ADMIN_EMAIL || 'admin@puppyhubusa.com',
+      subject: `New Application Submitted - ${validatedData.firstName} - Application ID: ${application.id}`,
+      html: adminEmail,
+      type: 'notification',
     });
 
     res.status(201).json({
@@ -134,6 +175,18 @@ router.patch('/:id/status', async (req: Request, res: Response) => {
       to: application.email,
       subject: `Application ${validatedData.status} - PuppyHub USA`,
       html: statusEmail,
+      type: 'status_update',
+    });
+
+    // Send WhatsApp status update message
+    const whatsappStatusMessage = whatsappService.generateStatusUpdateMessage(
+      application.firstName,
+      validatedData.status as 'approved' | 'rejected'
+    );
+
+    await whatsappService.sendMessage({
+      to: application.mobileNumber,
+      body: whatsappStatusMessage,
       type: 'status_update',
     });
 
