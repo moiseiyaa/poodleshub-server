@@ -37,7 +37,7 @@ function validateEnv(): EnvConfig {
 
   return {
     DATABASE_URL: process.env.DATABASE_URL!,
-    PORT: parseInt(process.env.PORT || '3001', 10),
+    PORT: parseInt(process.env.PORT || '4000', 10),
     NODE_ENV: (process.env.NODE_ENV as 'production' | 'development') || 'production',
     SMTP_HOST: process.env.SMTP_HOST!,
     SMTP_PORT: parseInt(process.env.SMTP_PORT!, 10),

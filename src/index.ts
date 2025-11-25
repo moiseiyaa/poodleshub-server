@@ -9,9 +9,25 @@ import adminRouter from './routes/admin';
 
 const app = express();
 
+const allowedOrigins = env.FRONTEND_URL.split(',').map((origin) => origin.trim());
+if (env.NODE_ENV !== 'production') {
+  ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:3001', 'http://127.0.0.1:3001'].forEach((origin) => {
+    if (!allowedOrigins.includes(origin)) {
+      allowedOrigins.push(origin);
+    }
+  });
+}
+
 // Middleware
 app.use(cors({
-  origin: env.FRONTEND_URL,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.warn(`Blocked CORS origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json());
