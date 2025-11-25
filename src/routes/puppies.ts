@@ -1,7 +1,24 @@
 import { Router } from 'express';
 import { prisma } from '../lib/prisma';
+import jwt from 'jsonwebtoken';
+import { env } from '../config/env';
+import type { Request, Response } from 'express';
 
 const router = Router();
+
+function verifyAdminJWT(req: Request, res: Response, next: Function) {
+  const token = req.headers['admin_token'] || req.headers['authorization'];
+  if (!token || typeof token !== 'string') {
+    return res.status(401).json({ error: 'Missing admin token' });
+  }
+  try {
+    const payload = jwt.verify(token.replace('Bearer ', ''), env.ADMIN_SECRET_KEY);
+    // Optionally check role, e.g. if (payload.role !== 'admin') ...
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid or expired admin token' });
+  }
+}
 
 /**
  * GET /api/puppies
@@ -88,6 +105,25 @@ router.get('/status/available', async (req, res) => {
   } catch (error) {
     console.error('Error fetching available puppies:', error);
     res.status(500).json({ error: 'Failed to fetch available puppies' });
+  }
+});
+
+router.patch('/:id', verifyAdminJWT, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    if (!status || typeof status !== 'string') {
+      return res.status(400).json({ error: 'Missing or invalid status' });
+    }
+    const puppy = await prisma.puppy.findUnique({ where: { id } });
+    if (!puppy) {
+      return res.status(404).json({ error: 'Puppy not found' });
+    }
+    const updated = await prisma.puppy.update({ where: { id }, data: { status } });
+    res.json({ message: 'Puppy status updated', puppy: updated });
+  } catch (err) {
+    console.error('Error updating puppy:', err);
+    res.status(500).json({ error: 'Failed to update puppy' });
   }
 });
 

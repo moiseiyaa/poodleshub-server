@@ -5,6 +5,7 @@ import puppiesRouter from './routes/puppies';
 import applicationsRouter from './routes/applications';
 import breedsRouter from './routes/breeds';
 import reservationsRouter from './routes/reservations';
+import adminRouter from './routes/admin';
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/api/puppies', puppiesRouter);
 app.use('/api/applications', applicationsRouter);
 app.use('/api/breeds', breedsRouter);
 app.use('/api/reservations', reservationsRouter);
+app.use('/api/admin', adminRouter);
 
 // 404 handler
 app.use((req, res) => {
