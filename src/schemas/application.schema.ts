@@ -51,6 +51,9 @@ export const createApplicationSchema = z.object({
   // Payment Info
   paymentMethod: z.enum(['creditCard', 'bankTransfer', 'applePay', 'googlePay', 'binance', 'crypto']).optional(),
   depositAmount: z.coerce.number().default(300),
+  
+  // Optional: Specific puppy ID if selected
+  puppyId: z.string().optional(),
 });
 
 export type CreateApplicationInput = z.infer<typeof createApplicationSchema>;

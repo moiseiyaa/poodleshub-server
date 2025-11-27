@@ -117,29 +117,70 @@ class EmailService {
     applicantPhone: string,
     puppyName: string,
     paymentMethod: string,
-    applicationId: string
+    applicationId: string,
+    puppyDetails?: {
+      id: string;
+      name: string;
+      breed: string;
+      gender: string;
+      color: string;
+      price: number;
+      birthDate: string;
+      images: string[];
+      generation?: string;
+      vaccinations?: string[];
+    }
   ): string {
+    const puppyInfoHtml = puppyDetails ? `
+      <h3>Puppy Information:</h3>
+      <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+        ${puppyDetails.images && puppyDetails.images.length > 0 ? `
+          <div style="margin-bottom: 15px;">
+            <img src="${puppyDetails.images[0]}" alt="${puppyDetails.name}" style="max-width: 300px; height: auto; border-radius: 5px;">
+          </div>
+        ` : ''}
+        <ul style="list-style: none; padding: 0;">
+          <li style="margin-bottom: 8px;"><strong>Name:</strong> ${puppyDetails.name}</li>
+          <li style="margin-bottom: 8px;"><strong>Breed:</strong> ${puppyDetails.breed}</li>
+          <li style="margin-bottom: 8px;"><strong>Gender:</strong> ${puppyDetails.gender}</li>
+          <li style="margin-bottom: 8px;"><strong>Color:</strong> ${puppyDetails.color}</li>
+          <li style="margin-bottom: 8px;"><strong>Price:</strong> $${puppyDetails.price}</li>
+          <li style="margin-bottom: 8px;"><strong>Birth Date:</strong> ${new Date(puppyDetails.birthDate).toLocaleDateString()}</li>
+          ${puppyDetails.generation ? `<li style="margin-bottom: 8px;"><strong>Generation:</strong> ${puppyDetails.generation}</li>` : ''}
+          ${puppyDetails.vaccinations && puppyDetails.vaccinations.length > 0 ? `<li style="margin-bottom: 8px;"><strong>Vaccinations:</strong> ${puppyDetails.vaccinations.join(', ')}</li>` : ''}
+        </ul>
+      </div>
+    ` : '';
+
     return `
-      <h2>New Application Submitted</h2>
+      <h2>🐕 New Application Submitted</h2>
       <p>A new adoption application has been received.</p>
       
       <h3>Applicant Information:</h3>
-      <ul>
-        <li><strong>Name:</strong> ${applicantName}</li>
-        <li><strong>Email:</strong> ${applicantEmail}</li>
-        <li><strong>Phone:</strong> ${applicantPhone}</li>
-      </ul>
+      <div style="background-color: #f0f0f0; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+        <ul style="list-style: none; padding: 0;">
+          <li style="margin-bottom: 8px;"><strong>Name:</strong> ${applicantName}</li>
+          <li style="margin-bottom: 8px;"><strong>Email:</strong> ${applicantEmail}</li>
+          <li style="margin-bottom: 8px;"><strong>Phone:</strong> ${applicantPhone}</li>
+        </ul>
+      </div>
       
       <h3>Application Details:</h3>
-      <ul>
-        <li><strong>Application ID:</strong> ${applicationId}</li>
-        <li><strong>Puppy/Breed Applied For:</strong> ${puppyName}</li>
-        <li><strong>Preferred Payment Method:</strong> ${paymentMethod}</li>
-      </ul>
+      <div style="background-color: #f0f0f0; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+        <ul style="list-style: none; padding: 0;">
+          <li style="margin-bottom: 8px;"><strong>Application ID:</strong> ${applicationId}</li>
+          <li style="margin-bottom: 8px;"><strong>Breed Applied For:</strong> ${puppyName}</li>
+          <li style="margin-bottom: 8px;"><strong>Preferred Payment Method:</strong> ${paymentMethod}</li>
+        </ul>
+      </div>
       
-      <p><a href="${process.env.FRONTEND_URL}/admin/applications/${applicationId}" style="background-color: #0066cc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Review Application</a></p>
+      ${puppyInfoHtml}
       
-      <p>Best regards,<br/>PuppyHub USA System</p>
+      <p style="margin-top: 20px;">
+        <a href="${process.env.FRONTEND_URL}/admin/applications/${applicationId}" style="background-color: #0066cc; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">Review Full Application</a>
+      </p>
+      
+      <p style="margin-top: 20px; color: #666; font-size: 12px;">Best regards,<br/>PuppyHub USA System</p>
     `;
   }
 }

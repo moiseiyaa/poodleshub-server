@@ -49,13 +49,23 @@ router.post('/', async (req: Request, res: Response) => {
       crypto: 'Crypto',
     };
     const paymentMethod = paymentMethodMap[validatedData.paymentMethod || ''] || 'Not specified';
+    
+    // Fetch puppy details if puppyId is provided
+    let puppyDetails: any = undefined;
+    if (validatedData.puppyId) {
+      puppyDetails = await prisma.puppy.findUnique({
+        where: { id: validatedData.puppyId },
+      });
+    }
+    
     const adminEmail = emailService.generateAdminNotificationEmail(
       validatedData.firstName,
       validatedData.email,
       validatedData.mobileNumber,
       puppyName,
       paymentMethod,
-      application.id
+      application.id,
+      puppyDetails
     );
 
     await emailService.sendEmail({
