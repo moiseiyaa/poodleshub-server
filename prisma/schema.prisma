@@ -77,6 +77,8 @@ model Application {
   pickupLocation        String
   secondPickupLocation  String?
   deliveryMethod        String   // 'pickup' | 'delivery'
+  paymentMethod         String?
+  depositAmount         Int?
   
   // Step 3: Household Information
   otherPets             Boolean

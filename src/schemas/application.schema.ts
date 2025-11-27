@@ -21,8 +21,6 @@ export const createApplicationSchema = z.object({
   })).min(1, 'At least one breed choice is required'),
   preferredSizes: z.array(z.string()).min(1, 'At least one size preference is required'),
   preferredGender: z.string().min(1, 'Gender preference is required'),
-  preferredColors: z.array(z.string()).min(1, 'At least one color preference is required'),
-  preferredCoatTypes: z.array(z.string()).min(1, 'At least one coat type is required'),
   activityLevel: z.string().min(1, 'Activity level is required'),
   pickupLocation: z.string().min(1, 'Pickup location is required'),
   secondPickupLocation: z.string().optional(),
@@ -40,7 +38,7 @@ export const createApplicationSchema = z.object({
   typicalDay: z.string().min(1, 'Description of typical day is required'),
   whyGoodFit: z.string().min(1, 'Description of why you are a good fit is required'),
   firstDog: z.boolean(),
-  previousPuppies: z.number().default(0),
+  previousPuppies: z.coerce.number().default(0),
   interestedInTraining: z.boolean(),
 
   // Step 4: Agreements
@@ -51,8 +49,8 @@ export const createApplicationSchema = z.object({
   welcomeCall: z.boolean().default(false),
 
   // Payment Info
-  paymentMethod: z.enum(['creditCard', 'bankTransfer', 'crypto']).optional(),
-  depositAmount: z.number().default(300),
+  paymentMethod: z.enum(['creditCard', 'bankTransfer', 'applePay', 'googlePay', 'binance', 'crypto']).optional(),
+  depositAmount: z.coerce.number().default(300),
 });
 
 export type CreateApplicationInput = z.infer<typeof createApplicationSchema>;

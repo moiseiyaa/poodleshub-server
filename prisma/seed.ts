@@ -199,7 +199,7 @@ async function main() {
   console.log(`✅ Created ${puppies.length} puppies`);
 
   // Create admin user
-  const adminEmail = 'admin@puppyhub.com';
+  const adminEmail = 'admin@puppyhubusa.com';
   const plainPassword = 'password123';
   const hashed = await bcrypt.hash(plainPassword, 10);
   await prisma.adminUser.create({

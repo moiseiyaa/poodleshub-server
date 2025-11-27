@@ -17,6 +17,8 @@ router.post('/', async (req: Request, res: Response) => {
       data: {
         ...validatedData,
         breedChoices: validatedData.breedChoices,
+        preferredColors: [],
+        preferredCoatTypes: [],
       },
     });
 
@@ -41,7 +43,10 @@ router.post('/', async (req: Request, res: Response) => {
     const paymentMethodMap: Record<string, string> = {
       creditCard: 'Credit Card',
       bankTransfer: 'Bank Transfer',
-      crypto: 'Cryptocurrency',
+      applePay: 'Apple Pay',
+      googlePay: 'Google Pay',
+      binance: 'Binance',
+      crypto: 'Crypto',
     };
     const paymentMethod = paymentMethodMap[validatedData.paymentMethod || ''] || 'Not specified';
     const adminEmail = emailService.generateAdminNotificationEmail(
