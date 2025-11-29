@@ -13,7 +13,12 @@ async function main() {
       const existingBreed = await prisma.breed.findUnique({ where: { name } });
       if (existingBreed) return existingBreed;
       
-      const breedData = {
+      const breedData: Record<string, {
+        description: string;
+        characteristics: string;
+        averageSize: string;
+        temperament: string;
+      }> = {
         Maltipoo: {
           description: 'A cross between a Maltese and a Poodle',
           characteristics: 'Small, friendly, intelligent',
