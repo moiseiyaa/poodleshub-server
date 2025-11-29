@@ -9,46 +9,13 @@ import adminRouter from './routes/admin.js';
 
 const app = express();
 
-const expandOriginVariants = (origin: string) => {
-  const variants = new Set<string>();
-  const trimmed = origin.trim();
-  if (!trimmed) return variants;
-
-  variants.add(trimmed);
-
-  // If origin is missing scheme, add both https and http.
-  if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
-    variants.add(`https://${trimmed}`);
-    variants.add(`http://${trimmed}`);
-  }
-
-  // Ensure we always include the https variant for production deployments.
-  if (trimmed.startsWith('http://')) {
-    variants.add(trimmed.replace('http://', 'https://'));
-  }
-
-  if (trimmed.startsWith('https://')) {
-    variants.add(trimmed.replace('https://', 'http://'));
-  }
-
-  return variants;
-};
-
-const allowedOrigins = Array.from(
-  env.FRONTEND_URL.split(',')
-    .map((origin) => expandOriginVariants(origin))
-    .reduce((acc, variants) => {
-      variants.forEach((variant) => acc.add(variant));
-      return acc;
-    }, new Set<string>())
-);
-if (env.NODE_ENV !== 'production') {
-  ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:3001', 'http://127.0.0.1:3001'].forEach((origin) => {
-    if (!allowedOrigins.includes(origin)) {
-      allowedOrigins.push(origin);
-    }
-  });
-}
+const allowedOrigins = [
+  env.FRONTEND_URL,
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'http://localhost:3001',
+  'http://127.0.0.1:3001'
+];
 
 // Middleware
 app.use(cors({
