@@ -12,6 +12,24 @@ const router = Router();
 router.post('/', async (req: Request, res: Response) => {
   try {
     const validatedData = createApplicationSchema.parse(req.body);
+    
+    // Debug: Log the puppyId being submitted
+    console.log('🐾 Creating application for puppyId:', validatedData.puppyId);
+    
+    // Check if puppy exists
+    const puppy = await prisma.puppy.findUnique({
+      where: { id: validatedData.puppyId }
+    });
+    
+    if (!puppy) {
+      console.error('❌ Puppy not found with ID:', validatedData.puppyId);
+      return res.status(400).json({ 
+        error: 'Puppy not found', 
+        puppyId: validatedData.puppyId 
+      });
+    }
+    
+    console.log('✅ Found puppy:', puppy.name);
 
     const application = await prisma.application.create({
       data: {
