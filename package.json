@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "./node_modules/.bin/tsc && npx prisma generate",
+    "build": "tsc && npx prisma generate",
     "start": "node dist/index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
@@ -29,7 +29,8 @@
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.10",
     "twilio": "^5.10.6",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "typescript": "^5.3.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -39,7 +40,6 @@
     "@types/node": "^20.10.6",
     "@types/nodemailer": "^6.4.21",
     "prisma": "^5.8.0",
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
+    "tsx": "^4.7.0"
   }
 }
