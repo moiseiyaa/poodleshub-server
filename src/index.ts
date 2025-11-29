@@ -74,6 +74,25 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Root route - API info
+app.get('/', (req, res) => {
+  res.json({
+    name: 'PuppyHub USA API',
+    version: '1.0.0',
+    status: 'operational',
+    endpoints: {
+      health: '/health',
+      puppies: '/api/puppies',
+      availablePuppies: '/api/puppies/status/available',
+      applications: '/api/applications',
+      breeds: '/api/breeds',
+      reservations: '/api/reservations',
+      admin: '/api/admin'
+    },
+    documentation: 'https://github.com/moiseiyaa/poodleshub-server'
+  });
+});
+
 // Routes
 app.use('/api/puppies', puppiesRouter);
 app.use('/api/applications', applicationsRouter);
