@@ -40,7 +40,15 @@ router.get('/', async (req, res) => {
       orderBy: { createdAt: 'desc' },
     });
 
-    res.json(puppies);
+    // Transform data to match frontend expected format
+    const transformedPuppies = puppies.map(puppy => ({
+      ...puppy,
+      parents: {
+        mother: puppy.damId || '/images/parents/placeholder-dam.jpg'
+      }
+    }));
+
+    res.json(transformedPuppies);
   } catch (error) {
     console.error('Error fetching puppies:', error);
     res.status(500).json({ error: 'Failed to fetch puppies' });
@@ -63,7 +71,15 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Puppy not found' });
     }
 
-    res.json(puppy);
+    // Transform data to match frontend expected format
+    const transformedPuppy = {
+      ...puppy,
+      parents: {
+        mother: puppy.damId || '/images/parents/placeholder-dam.jpg'
+      }
+    };
+
+    res.json(transformedPuppy);
   } catch (error) {
     console.error('Error fetching puppy:', error);
     res.status(500).json({ error: 'Failed to fetch puppy' });
@@ -83,7 +99,15 @@ router.get('/breed/:breed', async (req, res) => {
       orderBy: { createdAt: 'desc' },
     });
 
-    res.json(puppies);
+    // Transform data to match frontend expected format
+    const transformedPuppies = puppies.map(puppy => ({
+      ...puppy,
+      parents: {
+        mother: puppy.damId || '/images/parents/placeholder-dam.jpg'
+      }
+    }));
+
+    res.json(transformedPuppies);
   } catch (error) {
     console.error('Error fetching puppies by breed:', error);
     res.status(500).json({ error: 'Failed to fetch puppies' });
@@ -101,7 +125,15 @@ router.get('/status/available', async (req, res) => {
       orderBy: { createdAt: 'desc' },
     });
 
-    res.json(puppies);
+    // Transform data to match frontend expected format
+    const transformedPuppies = puppies.map(puppy => ({
+      ...puppy,
+      parents: {
+        mother: puppy.damId || '/images/parents/placeholder-dam.jpg'
+      }
+    }));
+
+    res.json(transformedPuppies);
   } catch (error) {
     console.error('Error fetching available puppies:', error);
     res.status(500).json({ error: 'Failed to fetch available puppies' });
