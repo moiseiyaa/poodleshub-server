@@ -53,6 +53,10 @@ if (env.NODE_ENV !== 'production') {
 // Middleware
 app.use(cors({
   origin: (origin, callback) => {
+    // Log all origins for debugging
+    console.log(`CORS request from origin: ${origin}`);
+    console.log(`Allowed origins: ${JSON.stringify(allowedOrigins)}`);
+    
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
