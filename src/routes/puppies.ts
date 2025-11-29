@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/prisma.js';
 import jwt from 'jsonwebtoken';
-import { env } from '../config/env';
+import { env } from '../config/env.js';
 import type { Request, Response } from 'express';
 
 const router = Router();

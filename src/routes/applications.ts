@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { prisma } from '../lib/prisma';
-import { emailService } from '../services/email.service';
-import { createApplicationSchema, updateApplicationStatusSchema } from '../schemas/application.schema';
+import { prisma } from '../lib/prisma.js';
+import { emailService } from '../services/email.service.js';
+import { createApplicationSchema, updateApplicationStatusSchema } from '../schemas/application.schema.js';
 
 const router = Router();
 

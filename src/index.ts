@@ -1,11 +1,11 @@
 import express from 'express';
 import cors from 'cors';
-import { env } from './config/env';
-import puppiesRouter from './routes/puppies';
-import applicationsRouter from './routes/applications';
-import breedsRouter from './routes/breeds';
-import reservationsRouter from './routes/reservations';
-import adminRouter from './routes/admin';
+import { env } from './config/env.js';
+import puppiesRouter from './routes/puppies.js';
+import applicationsRouter from './routes/applications.js';
+import breedsRouter from './routes/breeds.js';
+import reservationsRouter from './routes/reservations.js';
+import adminRouter from './routes/admin.js';
 
 const app = express();
 

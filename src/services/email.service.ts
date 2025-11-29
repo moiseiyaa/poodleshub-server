@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
-import { env } from '../config/env';
-import { prisma } from '../lib/prisma';
+import { env } from '../config/env.js';
+import { prisma } from '../lib/prisma.js';
 
 interface EmailOptions {
   to: string;
