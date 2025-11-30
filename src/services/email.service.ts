@@ -112,12 +112,20 @@ class EmailService {
   }
 
   generateAdminNotificationEmail(
-    applicantName: string,
-    applicantEmail: string,
-    applicantPhone: string,
-    puppyName: string,
-    paymentMethod: string,
-    applicationId: string,
+    application: {
+      displayId: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      mobileNumber: string;
+      address: string;
+      city: string;
+      state: string;
+      zipCode: string;
+      paymentMethod: string | null;
+      breedChoices: any;
+      id: string;
+    },
     puppyDetails?: {
       id: string;
       name: string;
@@ -131,56 +139,181 @@ class EmailService {
       vaccinations?: string[];
     }
   ): string {
+    // Payment method mapping
+    const paymentMethodMap: Record<string, string> = {
+      creditCard: 'Credit Card',
+      bankTransfer: 'Bank Transfer',
+      applePay: 'Apple Pay',
+      googlePay: 'Google Pay',
+      binance: 'Binance',
+      crypto: 'Crypto',
+    };
+    const paymentMethod = application.paymentMethod 
+      ? (paymentMethodMap[application.paymentMethod] || application.paymentMethod)
+      : 'Not specified';
+
+    // Get puppy name from breed choices
+    const puppyName = application.breedChoices?.[0]?.breed || 'our puppies';
+
+    // Full address
+    const fullAddress = `${application.address}, ${application.city}, ${application.state} ${application.zipCode}`;
+
+    // Logo URL - using the logo from the public folder
+    const logoUrl = process.env.FRONTEND_URL 
+      ? `${process.env.FRONTEND_URL}/images/icons/logo.png`
+      : 'https://puppyhubusa.com/images/icons/logo.png';
+
+    // Puppy information table
     const puppyInfoHtml = puppyDetails ? `
-      <h3>Puppy Information:</h3>
-      <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
-        ${puppyDetails.images && puppyDetails.images.length > 0 ? `
-          <div style="margin-bottom: 15px;">
-            <img src="${puppyDetails.images[0]}" alt="${puppyDetails.name}" style="max-width: 300px; height: auto; border-radius: 5px;">
-          </div>
-        ` : ''}
-        <ul style="list-style: none; padding: 0;">
-          <li style="margin-bottom: 8px;"><strong>Name:</strong> ${puppyDetails.name}</li>
-          <li style="margin-bottom: 8px;"><strong>Breed:</strong> ${puppyDetails.breed}</li>
-          <li style="margin-bottom: 8px;"><strong>Gender:</strong> ${puppyDetails.gender}</li>
-          <li style="margin-bottom: 8px;"><strong>Color:</strong> ${puppyDetails.color}</li>
-          <li style="margin-bottom: 8px;"><strong>Price:</strong> $${puppyDetails.price}</li>
-          <li style="margin-bottom: 8px;"><strong>Birth Date:</strong> ${new Date(puppyDetails.birthDate).toLocaleDateString()}</li>
-          ${puppyDetails.generation ? `<li style="margin-bottom: 8px;"><strong>Generation:</strong> ${puppyDetails.generation}</li>` : ''}
-          ${puppyDetails.vaccinations && puppyDetails.vaccinations.length > 0 ? `<li style="margin-bottom: 8px;"><strong>Vaccinations:</strong> ${puppyDetails.vaccinations.join(', ')}</li>` : ''}
-        </ul>
-      </div>
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <thead>
+          <tr>
+            <th colspan="2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; padding: 20px; text-align: left; font-size: 18px; font-weight: 600;">
+              🐕 Puppy Information
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          ${puppyDetails.images && puppyDetails.images.length > 0 ? `
+          <tr>
+            <td colspan="2" style="padding: 20px; text-align: center; background-color: #f8f9fa;">
+              <img src="${puppyDetails.images[0]}" alt="${puppyDetails.name}" style="max-width: 300px; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            </td>
+          </tr>
+          ` : ''}
+          <tr>
+            <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057; width: 40%;">Name:</td>
+            <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; color: #212529;">${puppyDetails.name}</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">Breed:</td>
+            <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; color: #212529;">${puppyDetails.breed}</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">Gender:</td>
+            <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; color: #212529;">${puppyDetails.gender}</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">Color:</td>
+            <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; color: #212529;">${puppyDetails.color}</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">Price:</td>
+            <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; color: #212529; font-weight: 600; color: #28a745;">$${puppyDetails.price.toLocaleString()}</td>
+          </tr>
+          <tr>
+            <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">Birth Date:</td>
+            <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; color: #212529;">${new Date(puppyDetails.birthDate).toLocaleDateString()}</td>
+          </tr>
+          ${puppyDetails.generation ? `
+          <tr>
+            <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">Generation:</td>
+            <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; color: #212529;">${puppyDetails.generation}</td>
+          </tr>
+          ` : ''}
+          ${puppyDetails.vaccinations && puppyDetails.vaccinations.length > 0 ? `
+          <tr>
+            <td style="padding: 12px 20px; font-weight: 600; color: #495057;">Vaccinations:</td>
+            <td style="padding: 12px 20px; color: #212529;">${puppyDetails.vaccinations.join(', ')}</td>
+          </tr>
+          ` : ''}
+        </tbody>
+      </table>
     ` : '';
 
     return `
-      <h2>🐕 New Application Submitted</h2>
-      <p>A new adoption application has been received.</p>
-      
-      <h3>Applicant Information:</h3>
-      <div style="background-color: #f0f0f0; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
-        <ul style="list-style: none; padding: 0;">
-          <li style="margin-bottom: 8px;"><strong>Name:</strong> ${applicantName}</li>
-          <li style="margin-bottom: 8px;"><strong>Email:</strong> ${applicantEmail}</li>
-          <li style="margin-bottom: 8px;"><strong>Phone:</strong> ${applicantPhone}</li>
-        </ul>
-      </div>
-      
-      <h3>Application Details:</h3>
-      <div style="background-color: #f0f0f0; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
-        <ul style="list-style: none; padding: 0;">
-          <li style="margin-bottom: 8px;"><strong>Application ID:</strong> ${applicationId}</li>
-          <li style="margin-bottom: 8px;"><strong>Breed Applied For:</strong> ${puppyName}</li>
-          <li style="margin-bottom: 8px;"><strong>Preferred Payment Method:</strong> ${paymentMethod}</li>
-        </ul>
-      </div>
-      
-      ${puppyInfoHtml}
-      
-      <p style="margin-top: 20px;">
-        <a href="${process.env.FRONTEND_URL}/admin/applications/${applicationId}" style="background-color: #0066cc; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">Review Full Application</a>
-      </p>
-      
-      <p style="margin-top: 20px; color: #666; font-size: 12px;">Best regards,<br/>PuppyHub USA System</p>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>New Application - ${application.displayId}</title>
+      </head>
+      <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f7fa; line-height: 1.6;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff;">
+          <!-- Header with Logo -->
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 20px; text-align: center;">
+            <img src="${logoUrl}" alt="PuppyHub USA Logo" style="max-width: 200px; height: auto; margin-bottom: 10px;">
+            <h1 style="color: #ffffff; margin: 10px 0 0 0; font-size: 24px; font-weight: 600;">New Application Submitted</h1>
+          </div>
+
+          <!-- Main Content -->
+          <div style="padding: 30px 20px;">
+            <p style="color: #6c757d; font-size: 16px; margin-bottom: 30px;">A new adoption application has been received and requires your review.</p>
+
+            <!-- Applicant Information Table -->
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              <thead>
+                <tr>
+                  <th colspan="2" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; padding: 20px; text-align: left; font-size: 18px; font-weight: 600;">
+                    👤 Applicant Information
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057; width: 40%;">Application ID:</td>
+                  <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; color: #212529; font-weight: 600; font-size: 18px; color: #667eea;">#${application.displayId}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">First Name:</td>
+                  <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; color: #212529;">${application.firstName}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">Last Name:</td>
+                  <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; color: #212529;">${application.lastName}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">Email:</td>
+                  <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; color: #212529;">
+                    <a href="mailto:${application.email}" style="color: #667eea; text-decoration: none;">${application.email}</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">Phone:</td>
+                  <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; color: #212529;">
+                    <a href="tel:${application.mobileNumber}" style="color: #667eea; text-decoration: none;">${application.mobileNumber}</a>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">Full Address:</td>
+                  <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; color: #212529;">${fullAddress}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; font-weight: 600; color: #495057;">Breed Applied For:</td>
+                  <td style="padding: 12px 20px; border-bottom: 1px solid #e9ecef; color: #212529;">${puppyName}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px 20px; font-weight: 600; color: #495057;">Payment Method:</td>
+                  <td style="padding: 12px 20px; color: #212529;">${paymentMethod}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            ${puppyInfoHtml}
+
+            <!-- Action Button -->
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${process.env.FRONTEND_URL || 'https://puppyhubusa.com'}/admin/applications/${application.id}" 
+                 style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; padding: 14px 32px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 600; font-size: 16px; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">
+                Review Full Application
+              </a>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-top: 1px solid #e9ecef;">
+            <p style="color: #6c757d; font-size: 14px; margin: 0;">
+              Best regards,<br/>
+              <strong style="color: #495057;">PuppyHub USA System</strong>
+            </p>
+            <p style="color: #adb5bd; font-size: 12px; margin: 10px 0 0 0;">
+              This is an automated notification. Please do not reply to this email.
+            </p>
+          </div>
+        </div>
+      </body>
+      </html>
     `;
   }
 }

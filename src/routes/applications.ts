@@ -6,6 +6,30 @@ import { createApplicationSchema, updateApplicationStatusSchema } from '../schem
 const router = Router();
 
 /**
+ * Generate a unique 4-digit display ID
+ */
+async function generateUniqueDisplayId(): Promise<string> {
+  let displayId: string;
+  let isUnique = false;
+  
+  while (!isUnique) {
+    // Generate a random 4-digit number (1000-9999)
+    displayId = Math.floor(1000 + Math.random() * 9000).toString();
+    
+    // Check if it already exists
+    const existing = await prisma.application.findUnique({
+      where: { displayId },
+    });
+    
+    if (!existing) {
+      isUnique = true;
+    }
+  }
+  
+  return displayId!;
+}
+
+/**
  * POST /api/applications
  * Submit a new adoption application
  */
@@ -31,9 +55,13 @@ router.post('/', async (req: Request, res: Response) => {
     
     console.log('✅ Found puppy:', puppy.name);
 
+    // Generate unique 4-digit display ID
+    const displayId = await generateUniqueDisplayId();
+
     const application = await prisma.application.create({
       data: {
         ...validatedData,
+        displayId,
         breedChoices: validatedData.breedChoices,
         preferredColors: [],
         preferredCoatTypes: [],
@@ -47,7 +75,7 @@ router.post('/', async (req: Request, res: Response) => {
     const confirmationEmail = emailService.generateApplicationConfirmationEmail(
       validatedData.firstName,
       puppyName,
-      application.id
+      application.displayId
     );
 
     await emailService.sendEmail({
@@ -57,17 +85,6 @@ router.post('/', async (req: Request, res: Response) => {
       type: 'application_confirmation',
     });
 
-    // Send admin notification email
-    const paymentMethodMap: Record<string, string> = {
-      creditCard: 'Credit Card',
-      bankTransfer: 'Bank Transfer',
-      applePay: 'Apple Pay',
-      googlePay: 'Google Pay',
-      binance: 'Binance',
-      crypto: 'Crypto',
-    };
-    const paymentMethod = paymentMethodMap[validatedData.paymentMethod || ''] || 'Not specified';
-    
     // Fetch puppy details if puppyId is provided
     let puppyDetails: any = undefined;
     if (validatedData.puppyId) {
@@ -76,26 +93,22 @@ router.post('/', async (req: Request, res: Response) => {
       });
     }
     
+    // Send admin notification email with full application data
     const adminEmail = emailService.generateAdminNotificationEmail(
-      validatedData.firstName,
-      validatedData.email,
-      validatedData.mobileNumber,
-      puppyName,
-      paymentMethod,
-      application.id,
+      application,
       puppyDetails
     );
 
     await emailService.sendEmail({
       to: process.env.ADMIN_EMAIL || 'admin@puppyhubusa.com',
-      subject: `New Application Submitted - ${validatedData.firstName} - Application ID: ${application.id}`,
+      subject: `New Application Submitted - ${validatedData.firstName} ${validatedData.lastName} - Application ID: ${application.displayId}`,
       html: adminEmail,
       type: 'notification',
     });
 
     res.status(201).json({
       message: 'Application submitted successfully',
-      applicationId: application.id,
+      applicationId: application.displayId,
     });
   } catch (error) {
     console.error('Error creating application:', error);

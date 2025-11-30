@@ -44,6 +44,7 @@ model Breed {
 
 model Application {
   id                   String   @id @default(cuid())
+  displayId            String   @unique
   firstName            String
   lastName             String
   email                String
@@ -91,6 +92,7 @@ model Application {
 
   @@index([email])
   @@index([status])
+  @@index([displayId])
 }
 
 model Reservation {
