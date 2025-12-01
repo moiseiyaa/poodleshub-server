@@ -7,7 +7,7 @@ async function main() {
   console.log('🌱 Seeding database...');
 
   // Create breeds (or get existing ones)
-  const breedNames = ['Maltipoo', 'Goldendoodle', 'Labradoodle', 'Bernedoodle', 'Poodle'];
+  const breedNames = ['Maltipoo', 'Goldendoodle', 'Labradoodle', 'Bernedoodle', 'Poodle', 'Border Collie'];
   const breeds = await Promise.all(
     breedNames.map(async (name) => {
       const existingBreed = await prisma.breed.findUnique({ where: { name } });
@@ -48,6 +48,12 @@ async function main() {
           characteristics: 'Very intelligent, hypoallergenic, elegant',
           averageSize: 'Toy (5-10 lbs), Mini (10-15 lbs), Standard (45-70 lbs)',
           temperament: 'Intelligent, proud, eager to please',
+        },
+        'Border Collie': {
+          description: 'Purebred Border Collie - highly intelligent working dog',
+          characteristics: 'Extremely intelligent, energetic, trainable, athletic',
+          averageSize: 'Medium (30-55 lbs)',
+          temperament: 'Intelligent, energetic, responsive, eager to work',
         },
       };
       
@@ -239,6 +245,24 @@ async function main() {
         '/images/puppies/angel-3.jpg'
       ],
       damImage: '/images/parents/labradoodle-dam-1.jpg',
+    },
+    {
+      name: 'Ace',
+      breed: 'Border Collie',
+      gender: 'male',
+      birthDate: new Date('2025-08-22'),
+      price: 895,
+      status: 'available',
+      color: 'black and white',
+      generation: 'Purebred',
+      vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
+      notes: 'Exceptionally intelligent and energetic Border Collie with strong herding instincts. Perfect for active families who can provide plenty of exercise and mental stimulation. Excels at agility training and learns commands quickly.',
+      images: [
+        '/images/puppies/ace-1.jpg',
+        '/images/puppies/ace-2.jpg',
+        '/images/puppies/ace-3.jpg'
+      ],
+      damImage: '/images/parents/border-collie-dam-1.jpg',
     },
   ];
 
