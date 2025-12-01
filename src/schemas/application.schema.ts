@@ -49,7 +49,7 @@ export const createApplicationSchema = z.object({
   welcomeCall: z.boolean().default(false),
 
   // Payment Info
-  paymentMethod: z.enum(['creditCard', 'bankTransfer', 'applePay', 'googlePay', 'binance', 'crypto']).optional(),
+  paymentMethod: z.enum(['creditCard', 'bankTransfer', 'applePay', 'googlePay', 'binance', 'crypto', 'paypal']).optional(),
   depositAmount: z.coerce.number().default(300),
   
   // Optional: Specific puppy ID if selected
