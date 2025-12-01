@@ -100,7 +100,7 @@ router.post('/', async (req: Request, res: Response) => {
     );
 
     await emailService.sendEmail({
-      to: process.env.ADMIN_EMAIL || 'admin@puppyhubusa.com',
+      to: process.env.ADMIN_EMAIL, // Admin email now strictly set by env file
       subject: `New Application Submitted - ${validatedData.firstName} ${validatedData.lastName} - Application ID: ${application.displayId}`,
       html: adminEmail,
       type: 'notification',

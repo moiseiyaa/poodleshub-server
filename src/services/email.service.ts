@@ -26,8 +26,14 @@ class EmailService {
 
   async sendEmail(options: EmailOptions): Promise<boolean> {
     try {
+      // Build a clean, branded FROM header so emails appear as coming from
+      // "PuppyHub Sales <sales@puppyhubusa.com>" (or whatever SMTP_FROM is set to)
+      const fromAddress = env.SMTP_FROM.includes('<')
+        ? env.SMTP_FROM
+        : `"PuppyHub Sales" <${env.SMTP_FROM}>`;
+
       await this.transporter.sendMail({
-        from: env.SMTP_FROM,
+        from: fromAddress,
         to: options.to,
         subject: options.subject,
         html: options.html,
