@@ -59,146 +59,156 @@ async function main() {
 
   console.log(`✅ Created ${breeds.length} breeds`);
 
-  // Create puppies
-  const puppies = await Promise.all([
-    prisma.puppy.create({
-      data: {
-        name: 'Sophie',
-        breed: 'Poodle',
-        gender: 'female',
-        birthDate: new Date('2025-08-25'),
-        price: 875,
-        status: 'available',
-        color: 'apricot',
-        generation: 'Purebred',
-        vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
-        notes: 'Miniature Poodle, very intelligent and eager to learn. Excellent with children and other pets.',
-        images: ['/images/puppies/sophie-1.jpg'],
-      },
-    }),
-    prisma.puppy.create({
-      data: {
-        name: 'Oliver',
-        breed: 'Poodle',
-        gender: 'male',
-        birthDate: new Date('2025-09-10'),
-        price: 925,
-        status: 'available',
-        color: 'black',
-        generation: 'Purebred',
-        vaccinations: ['DHLPP', 'Rabies'],
-        notes: 'Standard Poodle, confident and athletic. Great for active families who enjoy outdoor activities.',
-        images: ['/images/puppies/oliver-1.jpg'],
-      },
-    }),
-    prisma.puppy.create({
-      data: {
-        name: 'Lily',
-        breed: 'Poodle',
-        gender: 'female',
-        birthDate: new Date('2025-08-30'),
-        price: 799,
-        status: 'available',
-        color: 'white',
-        generation: 'Purebred',
-        vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
-        notes: 'Toy Poodle, affectionate and playful. Perfect companion for apartment living or smaller homes.',
-        images: ['/images/puppies/lily-1.jpg'],
-      },
-    }),
-    prisma.puppy.create({
-      data: {
-        name: 'Luna',
-        breed: 'Maltipoo',
-        gender: 'female',
-        birthDate: new Date('2025-09-01'),
-        price: 825,
-        status: 'available',
-        color: 'apricot',
-        generation: 'F1b',
-        vaccinations: ['DHLPP', 'Rabies'],
-        notes: 'Family raised, very playful and affectionate',
-        images: ['/images/puppies/luna-1.jpg'],
-      },
-    }),
-    prisma.puppy.create({
-      data: {
-        name: 'Max',
-        breed: 'Goldendoodle',
-        gender: 'male',
-        birthDate: new Date('2025-08-15'),
-        price: 875,
-        status: 'available',
-        color: 'cream',
-        generation: 'F1',
-        vaccinations: ['DHLPP'],
-        notes: 'Gentle temperament, great with kids',
-        images: ['/images/puppies/max-1.jpg'],
-      },
-    }),
-    prisma.puppy.create({
-      data: {
-        name: 'Bella',
-        breed: 'Labradoodle',
-        gender: 'female',
-        birthDate: new Date('2025-08-20'),
-        price: 699,
-        status: 'reserved',
-        color: 'chocolate',
-        generation: 'F1b',
-        vaccinations: ['DHLPP', 'Bordetella'],
-        notes: 'Smart and trainable, loves water',
-        images: ['/images/puppies/bella-1.jpg'],
-      },
-    }),
-    prisma.puppy.create({
-      data: {
-        name: 'Charlie',
-        breed: 'Bernedoodle',
-        gender: 'male',
-        birthDate: new Date('2025-09-05'),
-        price: 975,
-        status: 'available',
-        color: 'tri-color',
-        generation: 'F1',
-        vaccinations: ['DHLPP'],
-        notes: 'Calm and loyal, excellent family dog',
-        images: ['/images/puppies/charlie-1.jpg'],
-      },
-    }),
-    prisma.puppy.create({
-      data: {
-        name: 'Daisy',
-        breed: 'Maltipoo',
-        gender: 'female',
-        birthDate: new Date('2025-09-01'),
-        price: 825,
-        status: 'available',
-        color: 'white',
-        generation: 'F1b',
-        vaccinations: ['DHLPP', 'Rabies'],
-        notes: 'Sweet and cuddly, loves attention',
-        images: ['/images/puppies/daisy-1.jpg'],
-      },
-    }),
-    prisma.puppy.create({
-      data: {
-        name: 'Cooper',
-        breed: 'Goldendoodle',
-        gender: 'male',
-        birthDate: new Date('2025-08-15'),
-        price: 875,
-        status: 'available',
-        color: 'golden',
-        generation: 'F1',
-        vaccinations: ['DHLPP'],
-        notes: 'Energetic and friendly, loves to play',
-        images: ['/images/puppies/cooper-1.jpg'],
-      },
-    }),
-  ]);
+  // Puppy data to seed
+  const puppyData = [
+    {
+      name: 'Sophie',
+      breed: 'Poodle',
+      gender: 'female',
+      birthDate: new Date('2025-08-25'),
+      price: 875,
+      status: 'available',
+      color: 'apricot',
+      generation: 'Purebred',
+      vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
+      notes: 'Miniature Poodle, very intelligent and eager to learn. Excellent with children and other pets.',
+      images: ['/images/puppies/sophie-1.jpg'],
+    },
+    {
+      name: 'Oliver',
+      breed: 'Poodle',
+      gender: 'male',
+      birthDate: new Date('2025-09-10'),
+      price: 925,
+      status: 'available',
+      color: 'black',
+      generation: 'Purebred',
+      vaccinations: ['DHLPP', 'Rabies'],
+      notes: 'Standard Poodle, confident and athletic. Great for active families who enjoy outdoor activities.',
+      images: ['/images/puppies/oliver-1.jpg'],
+    },
+    {
+      name: 'Lily',
+      breed: 'Poodle',
+      gender: 'female',
+      birthDate: new Date('2025-08-30'),
+      price: 799,
+      status: 'available',
+      color: 'white',
+      generation: 'Purebred',
+      vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
+      notes: 'Toy Poodle, affectionate and playful. Perfect companion for apartment living or smaller homes.',
+      images: ['/images/puppies/lily-1.jpg'],
+    },
+    {
+      name: 'Luna',
+      breed: 'Maltipoo',
+      gender: 'female',
+      birthDate: new Date('2025-09-01'),
+      price: 825,
+      status: 'available',
+      color: 'apricot',
+      generation: 'F1b',
+      vaccinations: ['DHLPP', 'Rabies'],
+      notes: 'Family raised, very playful and affectionate',
+      images: ['/images/puppies/luna-1.jpg'],
+    },
+    {
+      name: 'Max',
+      breed: 'Goldendoodle',
+      gender: 'male',
+      birthDate: new Date('2025-08-15'),
+      price: 875,
+      status: 'available',
+      color: 'cream',
+      generation: 'F1',
+      vaccinations: ['DHLPP'],
+      notes: 'Gentle temperament, great with kids',
+      images: ['/images/puppies/max-1.jpg'],
+    },
+    {
+      name: 'Bella',
+      breed: 'Labradoodle',
+      gender: 'female',
+      birthDate: new Date('2025-08-20'),
+      price: 699,
+      status: 'reserved',
+      color: 'chocolate',
+      generation: 'F1b',
+      vaccinations: ['DHLPP', 'Bordetella'],
+      notes: 'Smart and trainable, loves water',
+      images: ['/images/puppies/bella-1.jpg'],
+    },
+    {
+      name: 'Charlie',
+      breed: 'Bernedoodle',
+      gender: 'male',
+      birthDate: new Date('2025-09-05'),
+      price: 975,
+      status: 'available',
+      color: 'tri-color',
+      generation: 'F1',
+      vaccinations: ['DHLPP'],
+      notes: 'Calm and loyal, excellent family dog',
+      images: ['/images/puppies/charlie-1.jpg'],
+    },
+    {
+      name: 'Daisy',
+      breed: 'Maltipoo',
+      gender: 'female',
+      birthDate: new Date('2025-09-01'),
+      price: 825,
+      status: 'available',
+      color: 'white',
+      generation: 'F1b',
+      vaccinations: ['DHLPP', 'Rabies'],
+      notes: 'Sweet and cuddly, loves attention',
+      images: ['/images/puppies/daisy-1.jpg'],
+    },
+    {
+      name: 'Cooper',
+      breed: 'Goldendoodle',
+      gender: 'male',
+      birthDate: new Date('2025-08-15'),
+      price: 875,
+      status: 'available',
+      color: 'golden',
+      generation: 'F1',
+      vaccinations: ['DHLPP'],
+      notes: 'Energetic and friendly, loves to play',
+      images: ['/images/puppies/cooper-1.jpg'],
+    },
+  ];
 
-  console.log(`✅ Created ${puppies.length} puppies`);
+  // Create puppies only if they don't already exist (check by name + breed + birthDate)
+  const createdPuppies = [];
+  const skippedPuppies = [];
+
+  for (const data of puppyData) {
+    // Check if puppy already exists
+    const existing = await prisma.puppy.findFirst({
+      where: {
+        name: data.name,
+        breed: data.breed,
+        birthDate: data.birthDate,
+      },
+    });
+
+    if (existing) {
+      skippedPuppies.push(`${data.name} (${data.breed})`);
+      continue;
+    }
+
+    const puppy = await prisma.puppy.create({ data });
+    createdPuppies.push(puppy);
+  }
+
+  if (createdPuppies.length > 0) {
+    console.log(`✅ Created ${createdPuppies.length} new puppies`);
+  }
+  if (skippedPuppies.length > 0) {
+    console.log(`⏭️  Skipped ${skippedPuppies.length} existing puppies: ${skippedPuppies.join(', ')}`);
+  }
 
   // Create admin user (if not exists)
   const adminEmail = 'admin@puppyhubusa.com';
