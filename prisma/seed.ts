@@ -187,6 +187,59 @@ async function main() {
       images: ['/images/puppies/cooper-1.jpg'],
       damImage: '/images/parents/goldendoodle-dam-1.jpg',
     },
+    {
+      name: 'Princess',
+      breed: 'Maltese',
+      gender: 'female',
+      birthDate: new Date('2025-09-05'),
+      price: 899,
+      status: 'available',
+      color: 'white',
+      generation: 'Purebred',
+      vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
+      notes: 'Elegant and graceful, loves to be pampered. Perfect lap dog with a sweet, gentle personality.',
+      images: [
+        '/images/puppies/princess-1.jpg',
+        '/images/puppies/princess-2.jpg',
+        '/images/puppies/princess-3.png'
+      ],
+      damImage: '/images/parents/maltese-dam-1.jpg',
+    },
+    {
+      name: 'Bentley',
+      breed: 'Maltese',
+      gender: 'male',
+      birthDate: new Date('2025-08-28'),
+      price: 925,
+      status: 'available',
+      color: 'white',
+      generation: 'Purebred',
+      vaccinations: ['DHLPP', 'Rabies'],
+      notes: 'Playful and energetic, loves attention. Great with children and makes an excellent family companion.',
+      images: [
+        '/images/puppies/bentley-1.jpg',
+        '/images/puppies/bentley-2.jpg'
+      ],
+      damImage: '/images/parents/maltese-dam-2.jpg',
+    },
+    {
+      name: 'Angel',
+      breed: 'Labradoodle',
+      gender: 'female',
+      birthDate: new Date('2025-09-10'),
+      price: 845,
+      status: 'available',
+      color: 'cream',
+      generation: 'F1b',
+      vaccinations: ['DHLPP', 'Bordetella'],
+      notes: 'Gentle Labradoodle who loves families and settles quickly in new homes.',
+      images: [
+        '/images/puppies/angel-1.jpg',
+        '/images/puppies/angel-2.jpg',
+        '/images/puppies/angel-3.jpg'
+      ],
+      damImage: '/images/parents/labradoodle-dam-1.jpg',
+    },
   ];
 
   // Create puppies only if they don't already exist (check by name + breed + birthDate)
