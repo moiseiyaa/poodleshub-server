@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../lib/prisma.js';
 import { emailService } from '../services/email.service.js';
+import { env } from '../config/env.js';
 import { createApplicationSchema, updateApplicationStatusSchema } from '../schemas/application.schema.js';
 
 const router = Router();
@@ -100,7 +101,7 @@ router.post('/', async (req: Request, res: Response) => {
     );
 
     await emailService.sendEmail({
-      to: process.env.ADMIN_EMAIL, // Admin email now strictly set by env file
+      to: env.ADMIN_EMAIL, // Admin email now strictly set by validated env config
       subject: `New Application Submitted - ${validatedData.firstName} ${validatedData.lastName} - Application ID: ${application.displayId}`,
       html: adminEmail,
       type: 'notification',
