@@ -164,6 +164,14 @@ class EmailService {
       : 'https://puppyhubusa.com/images/icons/logo.png';
 
     // Puppy information table
+    // Ensure we use an absolute URL for the puppy image so it works in email clients
+    const puppyImageUrl =
+      puppyDetails && puppyDetails.images && puppyDetails.images.length > 0
+        ? (puppyDetails.images[0].startsWith('http')
+            ? puppyDetails.images[0]
+            : `${process.env.FRONTEND_URL || 'https://puppyhubusa.com'}${puppyDetails.images[0]}`)
+        : null;
+
     const puppyInfoHtml = puppyDetails ? `
       <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
         <thead>
@@ -174,10 +182,10 @@ class EmailService {
           </tr>
         </thead>
         <tbody>
-          ${puppyDetails.images && puppyDetails.images.length > 0 ? `
+          ${puppyImageUrl ? `
           <tr>
             <td colspan="2" style="padding: 20px; text-align: center; background-color: #f8f9fa;">
-              <img src="${puppyDetails.images[0]}" alt="${puppyDetails.name}" style="max-width: 300px; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+              <img src="${puppyImageUrl}" alt="${puppyDetails.name}" style="max-width: 300px; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
             </td>
           </tr>
           ` : ''}
