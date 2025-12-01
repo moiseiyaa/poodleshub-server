@@ -41,29 +41,12 @@ router.get('/', async (req, res) => {
     });
 
     // Transform data to match frontend expected format
-    // Fetch dam images for puppies that have damId
-    const transformedPuppies = await Promise.all(
-      puppies.map(async (puppy) => {
-        let damImage = '/images/parents/placeholder-dam.jpg';
-        
-        if (puppy.damId) {
-          const dam = await prisma.puppy.findUnique({
-            where: { id: puppy.damId },
-            select: { images: true },
-          });
-          if (dam && dam.images && dam.images.length > 0) {
-            damImage = dam.images[0];
-          }
-        }
-
-        return {
-          ...puppy,
-          parents: {
-            mother: damImage,
-          },
-        };
-      })
-    );
+    const transformedPuppies = puppies.map((puppy) => ({
+      ...puppy,
+      parents: {
+        mother: puppy.damImage || '/images/parents/placeholder-dam.jpg',
+      },
+    }));
 
     res.json(transformedPuppies);
   } catch (error) {
@@ -88,23 +71,11 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Puppy not found' });
     }
 
-    // Fetch dam (mother) image if damId exists
-    let damImage = '/images/parents/placeholder-dam.jpg';
-    if (puppy.damId) {
-      const dam = await prisma.puppy.findUnique({
-        where: { id: puppy.damId },
-        select: { images: true },
-      });
-      if (dam && dam.images && dam.images.length > 0) {
-        damImage = dam.images[0];
-      }
-    }
-
     // Transform data to match frontend expected format
     const transformedPuppy = {
       ...puppy,
       parents: {
-        mother: damImage,
+        mother: puppy.damImage || '/images/parents/placeholder-dam.jpg',
       },
     };
 
@@ -129,29 +100,12 @@ router.get('/breed/:breed', async (req, res) => {
     });
 
     // Transform data to match frontend expected format
-    // Fetch dam images for puppies that have damId
-    const transformedPuppies = await Promise.all(
-      puppies.map(async (puppy) => {
-        let damImage = '/images/parents/placeholder-dam.jpg';
-        
-        if (puppy.damId) {
-          const dam = await prisma.puppy.findUnique({
-            where: { id: puppy.damId },
-            select: { images: true },
-          });
-          if (dam && dam.images && dam.images.length > 0) {
-            damImage = dam.images[0];
-          }
-        }
-
-        return {
-          ...puppy,
-          parents: {
-            mother: damImage,
-          },
-        };
-      })
-    );
+    const transformedPuppies = puppies.map((puppy) => ({
+      ...puppy,
+      parents: {
+        mother: puppy.damImage || '/images/parents/placeholder-dam.jpg',
+      },
+    }));
 
     res.json(transformedPuppies);
   } catch (error) {
@@ -172,29 +126,12 @@ router.get('/status/available', async (req, res) => {
     });
 
     // Transform data to match frontend expected format
-    // Fetch dam images for puppies that have damId
-    const transformedPuppies = await Promise.all(
-      puppies.map(async (puppy) => {
-        let damImage = '/images/parents/placeholder-dam.jpg';
-        
-        if (puppy.damId) {
-          const dam = await prisma.puppy.findUnique({
-            where: { id: puppy.damId },
-            select: { images: true },
-          });
-          if (dam && dam.images && dam.images.length > 0) {
-            damImage = dam.images[0];
-          }
-        }
-
-        return {
-          ...puppy,
-          parents: {
-            mother: damImage,
-          },
-        };
-      })
-    );
+    const transformedPuppies = puppies.map((puppy) => ({
+      ...puppy,
+      parents: {
+        mother: puppy.damImage || '/images/parents/placeholder-dam.jpg',
+      },
+    }));
 
     res.json(transformedPuppies);
   } catch (error) {

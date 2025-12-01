@@ -1,109 +1,155 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Puppy } from '@prisma/client';
 
 const prisma = new PrismaClient();
+
+async function getAllPuppies() {
+  return prisma.puppy.findMany({ orderBy: { createdAt: 'desc' } });
+}
+
+function groupByKey<T>(items: T[], keyFn: (item: T) => string) {
+  const map = new Map<string, T[]>();
+  items.forEach((item) => {
+    const key = keyFn(item);
+    const list = map.get(key) || [];
+    list.push(item);
+    map.set(key, list);
+  });
+  return map;
+}
+
+function formatDate(date: Date | string) {
+  const d = new Date(date);
+  return d.toISOString().split('T')[0];
+}
+
+async function removeDuplicates() {
+  console.log('🧹 Removing duplicate puppies...\n');
+
+  const allPuppies = await getAllPuppies();
+  console.log(`Total puppies before cleanup: ${allPuppies.length}\n`);
+
+  // Group by exact identity
+  const groups = groupByKey(allPuppies, (p) =>
+    [
+      p.name.toLowerCase(),
+      p.breed.toLowerCase(),
+      formatDate(p.birthDate),
+      p.color.toLowerCase(),
+    ].join('|'),
+  );
+
+  const deletions: string[] = [];
+  groups.forEach((puppies) => {
+    if (puppies.length <= 1) return;
+
+    // Keep the oldest entry (first created), delete the rest
+    const sorted = puppies.sort(
+      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
+    const keep = sorted[0];
+    const remove = sorted.slice(1);
+
+    remove.forEach((puppy) => deletions.push(puppy.id));
+
+    console.log(
+      `Keeping ${keep.id} (${keep.name} - ${keep.breed}), deleting ${remove.length} duplicates`,
+    );
+  });
+
+  if (deletions.length === 0) {
+    console.log('✅ No duplicates to remove.\n');
+  } else {
+    console.log(`Deleting ${deletions.length} duplicate entries...`);
+    await prisma.puppy.deleteMany({
+      where: { id: { in: deletions } },
+    });
+    console.log('✅ Duplicate entries removed.\n');
+  }
+
+  const remaining = await getAllPuppies();
+  console.log(`Total puppies after cleanup: ${remaining.length}\n`);
+}
 
 async function checkDuplicates() {
   console.log('🔍 Checking for duplicate puppies...\n');
 
-  // Get all puppies
-  const allPuppies = await prisma.puppy.findMany({
-    orderBy: { createdAt: 'desc' },
-  });
-
+  const allPuppies = await getAllPuppies();
   console.log(`Total puppies in database: ${allPuppies.length}\n`);
 
-  // Check for duplicates by name + breed combination
-  const nameBreedMap = new Map<string, any[]>();
-  
-  allPuppies.forEach(puppy => {
-    const key = `${puppy.name.toLowerCase()}-${puppy.breed.toLowerCase()}`;
-    if (!nameBreedMap.has(key)) {
-      nameBreedMap.set(key, []);
-    }
-    nameBreedMap.get(key)!.push(puppy);
-  });
+  const nameBreedMap = groupByKey(allPuppies, (puppy) =>
+    `${puppy.name.toLowerCase()}-${puppy.breed.toLowerCase()}`,
+  );
 
-  // Find duplicates
-  const duplicates: Array<{ key: string; puppies: any[] }> = [];
-  nameBreedMap.forEach((puppies, key) => {
-    if (puppies.length > 1) {
-      duplicates.push({ key, puppies });
-    }
-  });
+  const duplicates = Array.from(nameBreedMap.entries()).filter(
+    ([, puppies]) => puppies.length > 1,
+  );
 
   if (duplicates.length > 0) {
     console.log(`❌ Found ${duplicates.length} duplicate name+breed combinations:\n`);
-    duplicates.forEach(({ key, puppies }) => {
+    duplicates.forEach(([key, puppies]) => {
       console.log(`  "${key}" appears ${puppies.length} times:`);
-      puppies.forEach(p => {
-        console.log(`    - ID: ${p.id}, Name: ${p.name}, Breed: ${p.breed}, Status: ${p.status}, Created: ${p.createdAt}`);
-      });
+      puppies.forEach((p) =>
+        console.log(
+          `    - ID: ${p.id}, Name: ${p.name}, Breed: ${p.breed}, Status: ${p.status}, Created: ${p.createdAt}`,
+        ),
+      );
       console.log('');
     });
   } else {
     console.log('✅ No duplicates found by name+breed combination\n');
   }
 
-  // Check for exact duplicates (same name, breed, birthDate, color)
-  const exactDuplicates: Array<{ puppies: any[] }> = [];
-  const exactMap = new Map<string, any[]>();
-  
-  allPuppies.forEach(puppy => {
-    const key = `${puppy.name.toLowerCase()}-${puppy.breed.toLowerCase()}-${puppy.birthDate.toISOString()}-${puppy.color.toLowerCase()}`;
-    if (!exactMap.has(key)) {
-      exactMap.set(key, []);
-    }
-    exactMap.get(key)!.push(puppy);
-  });
+  const exactMap = groupByKey(allPuppies, (puppy) =>
+    [
+      puppy.name.toLowerCase(),
+      puppy.breed.toLowerCase(),
+      formatDate(puppy.birthDate),
+      puppy.color.toLowerCase(),
+    ].join('|'),
+  );
 
-  exactMap.forEach((puppies, key) => {
-    if (puppies.length > 1) {
-      exactDuplicates.push({ puppies });
-    }
-  });
+  const exactDuplicates = Array.from(exactMap.values()).filter(
+    (puppies) => puppies.length > 1,
+  );
 
   if (exactDuplicates.length > 0) {
-    console.log(`❌ Found ${exactDuplicates.length} exact duplicates (same name, breed, birthDate, color):\n`);
-    exactDuplicates.forEach(({ puppies }) => {
+    console.log(`❌ Found ${exactDuplicates.length} exact duplicates:\n`);
+    exactDuplicates.forEach((puppies) => {
       const first = puppies[0];
-      console.log(`  "${first.name} - ${first.breed}" (${first.birthDate.toISOString().split('T')[0]}, ${first.color}):`);
-      puppies.forEach(p => {
-        console.log(`    - ID: ${p.id}, Status: ${p.status}, Created: ${p.createdAt}`);
-      });
+      console.log(
+        `  "${first.name} - ${first.breed}" (${formatDate(first.birthDate)}, ${first.color}):`,
+      );
+      puppies.forEach((p) =>
+        console.log(`    - ID: ${p.id}, Status: ${p.status}, Created: ${p.createdAt}`),
+      );
       console.log('');
     });
   } else {
     console.log('✅ No exact duplicates found\n');
   }
 
-  // Summary by breed
   console.log('📊 Summary by breed:');
-  const breedCounts = new Map<string, number>();
-  allPuppies.forEach(p => {
-    breedCounts.set(p.breed, (breedCounts.get(p.breed) || 0) + 1);
-  });
-  
-  breedCounts.forEach((count, breed) => {
-    console.log(`  ${breed}: ${count} puppies`);
-  });
+  const breedCounts = groupByKey(allPuppies, (p) => p.breed);
+  breedCounts.forEach((puppies, breed) => console.log(`  ${breed}: ${puppies.length} puppies`));
 
-  // Summary by status
   console.log('\n📊 Summary by status:');
-  const statusCounts = new Map<string, number>();
-  allPuppies.forEach(p => {
-    statusCounts.set(p.status, (statusCounts.get(p.status) || 0) + 1);
-  });
-  
-  statusCounts.forEach((count, status) => {
-    console.log(`  ${status}: ${count} puppies`);
-  });
+  const statusCounts = groupByKey(allPuppies, (p) => p.status);
+  statusCounts.forEach((puppies, status) => console.log(`  ${status}: ${puppies.length} puppies`));
 
-  await prisma.$disconnect();
+  console.log('');
 }
 
-checkDuplicates()
+async function main() {
+  await removeDuplicates();
+  await checkDuplicates();
+}
+
+main()
   .catch((e) => {
-    console.error('❌ Error checking duplicates:', e);
+    console.error('❌ Error during duplicate cleanup:', e);
     process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
   });
 

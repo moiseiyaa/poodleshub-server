@@ -73,6 +73,7 @@ async function main() {
       vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
       notes: 'Miniature Poodle, very intelligent and eager to learn. Excellent with children and other pets.',
       images: ['/images/puppies/sophie-1.jpg'],
+      damImage: '/images/parents/poodle-dam-1.jpg',
     },
     {
       name: 'Oliver',
@@ -86,6 +87,7 @@ async function main() {
       vaccinations: ['DHLPP', 'Rabies'],
       notes: 'Standard Poodle, confident and athletic. Great for active families who enjoy outdoor activities.',
       images: ['/images/puppies/oliver-1.jpg'],
+      damImage: '/images/parents/poodle-dam-2.jpg',
     },
     {
       name: 'Lily',
@@ -99,6 +101,7 @@ async function main() {
       vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
       notes: 'Toy Poodle, affectionate and playful. Perfect companion for apartment living or smaller homes.',
       images: ['/images/puppies/lily-1.jpg'],
+      damImage: '/images/parents/poodle-dam-3.jpg',
     },
     {
       name: 'Luna',
@@ -112,6 +115,7 @@ async function main() {
       vaccinations: ['DHLPP', 'Rabies'],
       notes: 'Family raised, very playful and affectionate',
       images: ['/images/puppies/luna-1.jpg'],
+      damImage: '/images/parents/maltipoo-dam-1.jpg',
     },
     {
       name: 'Max',
@@ -125,6 +129,7 @@ async function main() {
       vaccinations: ['DHLPP'],
       notes: 'Gentle temperament, great with kids',
       images: ['/images/puppies/max-1.jpg'],
+      damImage: '/images/parents/goldendoodle-dam-1.jpg',
     },
     {
       name: 'Bella',
@@ -138,6 +143,7 @@ async function main() {
       vaccinations: ['DHLPP', 'Bordetella'],
       notes: 'Smart and trainable, loves water',
       images: ['/images/puppies/bella-1.jpg'],
+      damImage: '/images/parents/labradoodle-dam-1.jpg',
     },
     {
       name: 'Charlie',
@@ -151,6 +157,7 @@ async function main() {
       vaccinations: ['DHLPP'],
       notes: 'Calm and loyal, excellent family dog',
       images: ['/images/puppies/charlie-1.jpg'],
+      damImage: '/images/parents/bernedoodle-dam-1.jpg',
     },
     {
       name: 'Daisy',
@@ -164,6 +171,7 @@ async function main() {
       vaccinations: ['DHLPP', 'Rabies'],
       notes: 'Sweet and cuddly, loves attention',
       images: ['/images/puppies/daisy-1.jpg'],
+      damImage: '/images/parents/maltipoo-dam-2.jpg',
     },
     {
       name: 'Cooper',
@@ -177,6 +185,7 @@ async function main() {
       vaccinations: ['DHLPP'],
       notes: 'Energetic and friendly, loves to play',
       images: ['/images/puppies/cooper-1.jpg'],
+      damImage: '/images/parents/goldendoodle-dam-1.jpg',
     },
   ];
 

@@ -20,6 +20,7 @@ model Puppy {
   vaccinations String[]
   notes        String?
   images       String[]
+  damImage     String?
   sireId       String?
   damId        String?
   createdAt    DateTime      @default(now())

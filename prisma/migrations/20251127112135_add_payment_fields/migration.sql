@@ -156,3 +156,17 @@ ALTER TABLE "Application" ADD CONSTRAINT "Application_puppyId_fkey" FOREIGN KEY 
 
 -- AddForeignKey
 ALTER TABLE "Reservation" ADD CONSTRAINT "Reservation_puppyId_fkey" FOREIGN KEY ("puppyId") REFERENCES "Puppy"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- 1) Add the column as nullable
+ALTER TABLE "Application" ADD COLUMN "displayId" TEXT;
+
+-- 2) Backfill existing rows with a 4‑digit value
+UPDATE "Application"
+SET "displayId" = LPAD(FLOOR(RANDOM() * 9000 + 1000)::text, 4, '0')
+WHERE "displayId" IS NULL;
+
+-- 3) Make it required and unique
+ALTER TABLE "Application"
+ALTER COLUMN "displayId" SET NOT NULL;
+
+CREATE UNIQUE INDEX "Application_displayId_key" ON "Application"("displayId");
