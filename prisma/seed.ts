@@ -264,35 +264,7 @@ async function main() {
       ],
       damImage: '/images/parents/border-collie-dam-1.jpg',
     },
-    {
-      name: 'Jasper',
-      breed: 'Poodle',
-      gender: 'male',
-      birthDate: new Date('2025-09-15'),
-      price: 1650,
-      status: 'available',
-      color: 'black',
-      generation: 'Purebred',
-      vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
-      notes: 'Part of a bonded pair with Lizzy. These siblings are best friends and should be adopted together for optimal happiness and well-being.',
-      images: ['/images/puppies/jasper-lizzy-1.jpg'],
-      damImage: '/images/parents/poodle-dam-4.jpg',
-    },
-    {
-      name: 'Lizzy',
-      breed: 'Poodle',
-      gender: 'female',
-      birthDate: new Date('2025-09-15'),
-      price: 1650,
-      status: 'available',
-      color: 'brown',
-      generation: 'Purebred',
-      vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
-      notes: 'Part of a bonded pair with Jasper. These siblings are best friends and should be adopted together for optimal happiness and well-being.',
-      images: ['/images/puppies/jasper-lizzy-1.jpg'],
-      damImage: '/images/parents/poodle-dam-4.jpg',
-    },
-  ];
+    ];
 
   // Create puppies only if they don't already exist (check by name + breed + birthDate)
   const createdPuppies = [];
