@@ -264,6 +264,20 @@ async function main() {
       ],
       damImage: '/images/parents/border-collie-dam-1.jpg',
     },
+    {
+      name: 'Jasper & Lizzy',
+      breed: 'Poodle',
+      gender: 'pair',
+      birthDate: new Date('2025-09-15'),
+      price: 3300,
+      status: 'available',
+      color: 'black & brown',
+      generation: 'Purebred',
+      vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
+      notes: 'Jasper and Lizzy are bonded siblings who must be adopted together. They are inseparable best friends who bring double the love and joy to their forever home.',
+      images: ['/images/puppies/jasper-lizzy-1.jpg'],
+      damImage: '/images/parents/poodle-dam-4.jpg',
+    },
     ];
 
   // Create puppies only if they don't already exist (check by name + breed + birthDate)
