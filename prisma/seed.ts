@@ -276,7 +276,7 @@ async function main() {
       vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
       notes: 'Jasper and Lizzy are bonded siblings who must be adopted together. They are inseparable best friends who bring double the love and joy to their forever home.',
       images: ['/images/puppies/jasper-lizzy-1.jpg'],
-      damImage: '/images/parents/poodle-dam-4.jpg',
+      damImage: '/images/parents/poodle-dam-1.jpg',
     },
     ];
 
