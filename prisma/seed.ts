@@ -7,7 +7,7 @@ async function main() {
   console.log('🌱 Seeding database...');
 
   // Create breeds (or get existing ones)
-  const breedNames = ['Maltipoo', 'Goldendoodle', 'Labradoodle', 'Bernedoodle', 'Poodle', 'Border Collie'];
+  const breedNames = ['Maltipoo', 'Goldendoodle', 'Labradoodle', 'Bernedoodle', 'Poodle', 'Border Collie', 'Cardigan Welsh Corgi'];
   const breeds = await Promise.all(
     breedNames.map(async (name) => {
       const existingBreed = await prisma.breed.findUnique({ where: { name } });
@@ -50,10 +50,16 @@ async function main() {
           temperament: 'Intelligent, proud, eager to please',
         },
         'Border Collie': {
-          description: 'Purebred Border Collie - highly intelligent working dog',
-          characteristics: 'Extremely intelligent, energetic, trainable, athletic',
-          averageSize: 'Medium (30-55 lbs)',
-          temperament: 'Intelligent, energetic, responsive, eager to work',
+          description: 'Highly intelligent herding dog',
+          characteristics: 'Energetic, intelligent, work-oriented',
+          averageSize: '30-45 lbs',
+          temperament: 'Energetic, intelligent, responsive',
+        },
+        'Cardigan Welsh Corgi': {
+          description: 'One of the oldest herding breeds, known for their long tail and fox-like expression',
+          characteristics: 'Alert, affectionate, intelligent',
+          averageSize: '25-38 lbs',
+          temperament: 'Loyal, affectionate, intelligent, active',
         },
       };
       
@@ -277,6 +283,20 @@ async function main() {
       notes: 'Jasper and Lizzy are bonded siblings who must be adopted together. They are inseparable best friends who bring double the love and joy to their forever home.',
       images: ['/images/puppies/jasper-lizzy-1.jpg'],
       damImage: '/images/parents/poodle-dam-1.jpg',
+    },
+    {
+      name: 'Terry',
+      breed: 'Cardigan Welsh Corgi',
+      gender: 'male',
+      birthDate: new Date('2025-09-20'),
+      price: 1800,
+      status: 'available',
+      color: 'black & white',
+      generation: 'Purebred',
+      vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
+      notes: 'Meet Terry, an adorable Cardigan Welsh Corgi puppy with classic panda markings. He has a playful, alert, and affectionate personality, and is extremely intelligent. Terry loves cuddles and enjoys being around people. Perfect for families or first-time pet parents. He is already showing signs of being smart, easy to train, and very affectionate. He enjoys toys, cozy beds, and being part of household activities.',
+      images: ['/images/puppies/terry-1.jpg'],
+      damImage: '/images/parents/corgi-dam-1.jpg',
     },
     ];
 
