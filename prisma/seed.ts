@@ -295,7 +295,11 @@ async function main() {
       generation: 'Purebred',
       vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
       notes: 'Meet Terry, an adorable Cardigan Welsh Corgi puppy with classic panda markings. He has a playful, alert, and affectionate personality, and is extremely intelligent. Terry loves cuddles and enjoys being around people. Perfect for families or first-time pet parents. He is already showing signs of being smart, easy to train, and very affectionate. He enjoys toys, cozy beds, and being part of household activities.',
-      images: ['/images/puppies/terry-1.jpg'],
+      images: [
+        '/images/puppies/terry-1.jpg',
+        '/images/puppies/terry-2.jpg',
+        '/images/puppies/terry-3.jpg'
+      ],
       damImage: '/images/parents/corgi-dam-1.jpg',
     },
     ];
