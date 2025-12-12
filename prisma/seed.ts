@@ -84,7 +84,10 @@ async function main() {
       generation: 'Purebred',
       vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
       notes: 'Miniature Poodle, very intelligent and eager to learn. Excellent with children and other pets.',
-      images: ['/images/puppies/sophie-1.jpg'],
+      images: ['/images/puppies/sophie-1.jpg',
+              '/images/puppies/sophie-2.jpg',
+              '/images/puppies/sophie-3.jpg'
+      ],
       damImage: '/images/parents/poodle-dam-1.jpg',
     },
     {
@@ -98,7 +101,10 @@ async function main() {
       generation: 'Purebred',
       vaccinations: ['DHLPP', 'Rabies'],
       notes: 'Standard Poodle, confident and athletic. Great for active families who enjoy outdoor activities.',
-      images: ['/images/puppies/oliver-1.jpg'],
+      images: ['/images/puppies/oliver-1.jpg',
+        '/images/puppies/oliver-2.jpg',
+        '/images/puppies/oliver-3.jpg'],
+
       damImage: '/images/parents/poodle-dam-2.jpg',
     },
     {
@@ -112,7 +118,10 @@ async function main() {
       generation: 'Purebred',
       vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
       notes: 'Toy Poodle, affectionate and playful. Perfect companion for apartment living or smaller homes.',
-      images: ['/images/puppies/lily-1.jpg'],
+      images: ['/images/puppies/lily-1.jpg',
+        '/images/puppies/lily-2.jpg',
+        '/images/puppies/lily-3.ipg'
+      ],
       damImage: '/images/parents/poodle-dam-3.jpg',
     },
     {
@@ -126,7 +135,10 @@ async function main() {
       generation: 'F1b',
       vaccinations: ['DHLPP', 'Rabies'],
       notes: 'Family raised, very playful and affectionate',
-      images: ['/images/puppies/luna-1.jpg'],
+      images: ['/images/puppies/luna-1.jpg',
+        '/images/puppies/luna-2.jpg',
+        '/images/puppies/luna-3.jpg'
+      ],
       damImage: '/images/parents/maltipoo-dam-1.jpg',
     },
     {
@@ -140,7 +152,10 @@ async function main() {
       generation: 'F1',
       vaccinations: ['DHLPP'],
       notes: 'Gentle temperament, great with kids',
-      images: ['/images/puppies/max-1.jpg'],
+      images: ['/images/puppies/max-1.jpg',
+        '/images/puppies/max-2.jpg',
+        '/images/puppies/max-3.jpg'
+      ],
       damImage: '/images/parents/goldendoodle-dam-1.jpg',
     },
     {
@@ -154,7 +169,9 @@ async function main() {
       generation: 'F1b',
       vaccinations: ['DHLPP', 'Bordetella'],
       notes: 'Smart and trainable, loves water',
-      images: ['/images/puppies/bella-1.jpg'],
+      images: ['/images/puppies/bella-1.jpg',
+        '/images/puppies/princess-2.jpg',
+        '/images/puppies/princess-3.jpg'],
       damImage: '/images/parents/labradoodle-dam-1.jpg',
     },
     {
@@ -168,7 +185,10 @@ async function main() {
       generation: 'F1',
       vaccinations: ['DHLPP'],
       notes: 'Calm and loyal, excellent family dog',
-      images: ['/images/puppies/charlie-1.jpg'],
+      images: ['/images/puppies/charlie-1.jpg',
+        '/images/puppies/charlie-2.jpg',
+        '/images/puppies/charlie-3.jpg'
+      ],
       damImage: '/images/parents/bernedoodle-dam-1.jpg',
     },
     {
@@ -182,7 +202,10 @@ async function main() {
       generation: 'F1b',
       vaccinations: ['DHLPP', 'Rabies'],
       notes: 'Sweet and cuddly, loves attention',
-      images: ['/images/puppies/daisy-1.jpg'],
+      images: ['/images/puppies/daisy-1.jpg',
+        '/images/puppies/daisy-2.jpg',
+        '/images/puppies/daisy-3.jpg'
+      ],
       damImage: '/images/parents/maltipoo-dam-2.jpg',
     },
     {
@@ -196,7 +219,10 @@ async function main() {
       generation: 'F1',
       vaccinations: ['DHLPP'],
       notes: 'Energetic and friendly, loves to play',
-      images: ['/images/puppies/cooper-1.jpg'],
+      images: ['/images/puppies/cooper-1.jpg',
+        '/images/puppies/cooper-2.jpg',
+        '/images/puppies/cooper-3.jpg'
+      ],
       damImage: '/images/parents/goldendoodle-dam-1.jpg',
     },
     {
@@ -281,7 +307,10 @@ async function main() {
       generation: 'Purebred',
       vaccinations: ['DHLPP', 'Rabies', 'Bordetella'],
       notes: 'Jasper and Lizzy are bonded siblings who must be adopted together. They are inseparable best friends who bring double the love and joy to their forever home.',
-      images: ['/images/puppies/jasper-lizzy-1.jpg'],
+      images: ['/images/puppies/jasper-lizzy-1.jpg',
+        '/images/puppies/jasper-lizzy-2.jpg',
+        '/images/puppies/jasper-lizzy-3.jpg'
+      ],
       damImage: '/images/parents/poodle-dam-1.jpg',
     },
     {
