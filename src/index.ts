@@ -6,6 +6,7 @@ import applicationsRouter from './routes/applications.js';
 import breedsRouter from './routes/breeds.js';
 import reservationsRouter from './routes/reservations.js';
 import adminRouter from './routes/admin.js';
+import testimonialsRouter from './routes/testimonials.js';
 
 const app = express();
 
@@ -66,6 +67,7 @@ app.use('/api/applications', applicationsRouter);
 app.use('/api/breeds', breedsRouter);
 app.use('/api/reservations', reservationsRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/testimonials', testimonialsRouter);
 
 // 404 handler
 app.use((req, res) => {

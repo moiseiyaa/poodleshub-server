@@ -140,7 +140,134 @@ router.get('/status/available', async (req, res) => {
   }
 });
 
+/**
+ * Create a new puppy (admin)
+ */
+router.post('/', verifyAdminJWT, async (req: Request, res: Response) => {
+  try {
+    const {
+      name,
+      breed,
+      gender,
+      birthDate,
+      price,
+      status = 'available',
+      color,
+      generation,
+      vaccinations = [],
+      notes,
+      images = [],
+      damImage,
+      sireId,
+      damId,
+    } = req.body;
+
+    if (!name || !breed || !gender || !birthDate || price === undefined || !color || !generation) {
+      return res.status(400).json({ error: 'Missing required puppy fields' });
+    }
+
+    const puppy = await prisma.puppy.create({
+      data: {
+        name,
+        breed,
+        gender,
+        birthDate: new Date(birthDate),
+        price: Number(price),
+        status,
+        color,
+        generation,
+        vaccinations,
+        notes,
+        images,
+        damImage,
+        sireId,
+        damId,
+      },
+    });
+
+    res.status(201).json(puppy);
+  } catch (err) {
+    console.error('Error creating puppy:', err);
+    res.status(500).json({ error: 'Failed to create puppy' });
+  }
+});
+
+/**
+ * Update puppy fields (admin)
+ */
 router.patch('/:id', verifyAdminJWT, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const {
+      name,
+      breed,
+      gender,
+      birthDate,
+      price,
+      status,
+      color,
+      generation,
+      vaccinations,
+      notes,
+      images,
+      damImage,
+      sireId,
+      damId,
+    } = req.body;
+
+    const existing = await prisma.puppy.findUnique({ where: { id } });
+    if (!existing) {
+      return res.status(404).json({ error: 'Puppy not found' });
+    }
+
+    const updated = await prisma.puppy.update({
+      where: { id },
+      data: {
+        name: name ?? existing.name,
+        breed: breed ?? existing.breed,
+        gender: gender ?? existing.gender,
+        birthDate: birthDate ? new Date(birthDate) : existing.birthDate,
+        price: price !== undefined ? Number(price) : existing.price,
+        status: status ?? existing.status,
+        color: color ?? existing.color,
+        generation: generation ?? existing.generation,
+        vaccinations: vaccinations ?? existing.vaccinations,
+        notes: notes ?? existing.notes,
+        images: images ?? existing.images,
+        damImage: damImage ?? existing.damImage,
+        sireId: sireId ?? existing.sireId,
+        damId: damId ?? existing.damId,
+      },
+    });
+
+    res.json(updated);
+  } catch (err) {
+    console.error('Error updating puppy:', err);
+    res.status(500).json({ error: 'Failed to update puppy' });
+  }
+});
+
+/**
+ * Delete puppy (admin)
+ */
+router.delete('/:id', verifyAdminJWT, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    await prisma.puppy.delete({ where: { id } });
+    res.json({ message: 'Puppy deleted' });
+  } catch (err: any) {
+    if (err.code === 'P2025') {
+      return res.status(404).json({ error: 'Puppy not found' });
+    }
+    console.error('Error deleting puppy:', err);
+    res.status(500).json({ error: 'Failed to delete puppy' });
+  }
+});
+
+/**
+ * Legacy status-only endpoint (admin)
+ */
+router.patch('/:id/status', verifyAdminJWT, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -154,8 +281,8 @@ router.patch('/:id', verifyAdminJWT, async (req: Request, res: Response) => {
     const updated = await prisma.puppy.update({ where: { id }, data: { status } });
     res.json({ message: 'Puppy status updated', puppy: updated });
   } catch (err) {
-    console.error('Error updating puppy:', err);
-    res.status(500).json({ error: 'Failed to update puppy' });
+    console.error('Error updating puppy status:', err);
+    res.status(500).json({ error: 'Failed to update puppy status' });
   }
 });
 

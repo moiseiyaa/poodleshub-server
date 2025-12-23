@@ -133,3 +133,17 @@ model EmailLog {
   error     String?
   createdAt DateTime @default(now())
 }
+
+model Testimonial {
+  id         String   @id @default(cuid())
+  name       String
+  location   String?
+  rating     Int
+  text       String
+  puppyName  String?
+  puppyBreed String?
+  initials   String?
+  date       DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
