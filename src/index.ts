@@ -7,6 +7,8 @@ import breedsRouter from './routes/breeds.js';
 import reservationsRouter from './routes/reservations.js';
 import adminRouter from './routes/admin.js';
 import testimonialsRouter from './routes/testimonials.js';
+import puppyCommentsRouter from './routes/puppy-comments.js';
+import puppyReviewsRouter from './routes/puppy-reviews.js';
 
 const app = express();
 
@@ -55,7 +57,9 @@ app.get('/', (req, res) => {
       applications: '/api/applications',
       breeds: '/api/breeds',
       reservations: '/api/reservations',
-      admin: '/api/admin'
+      admin: '/api/admin',
+      puppyComments: '/api/puppy-comments',
+      puppyReviews: '/api/puppy-reviews'
     },
     documentation: 'https://github.com/moiseiyaa/poodleshub-server'
   });
@@ -68,6 +72,8 @@ app.use('/api/breeds', breedsRouter);
 app.use('/api/reservations', reservationsRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/testimonials', testimonialsRouter);
+app.use('/api/puppy-comments', puppyCommentsRouter);
+app.use('/api/puppy-reviews', puppyReviewsRouter);
 
 // 404 handler
 app.use((req, res) => {
@@ -87,7 +93,24 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // Start server
 const PORT = env.PORT;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`Environment: ${env.NODE_ENV}`);
+});
+
+// Handle port already in use error
+server.on('error', (err: any) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\n❌ Port ${PORT} is already in use!`);
+    console.error(`\n💡 Solutions:`);
+    console.error(`   1. Kill the process using port ${PORT}:`);
+    console.error(`      Windows: netstat -ano | findstr :${PORT}`);
+    console.error(`      Then: taskkill /PID <PID> /F`);
+    console.error(`   2. Or change PORT in your .env file`);
+    console.error(`   3. Or find and stop the other server instance\n`);
+    process.exit(1);
+  } else {
+    console.error('❌ Server error:', err);
+    process.exit(1);
+  }
 });
