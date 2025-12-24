@@ -7,8 +7,6 @@ import breedsRouter from './routes/breeds.js';
 import reservationsRouter from './routes/reservations.js';
 import adminRouter from './routes/admin.js';
 import testimonialsRouter from './routes/testimonials.js';
-import puppyCommentsRouter from './routes/puppy-comments.js';
-import puppyReviewsRouter from './routes/puppy-reviews.js';
 
 const app = express();
 
@@ -57,9 +55,7 @@ app.get('/', (req, res) => {
       applications: '/api/applications',
       breeds: '/api/breeds',
       reservations: '/api/reservations',
-      admin: '/api/admin',
-      puppyComments: '/api/puppy-comments',
-      puppyReviews: '/api/puppy-reviews'
+      admin: '/api/admin'
     },
     documentation: 'https://github.com/moiseiyaa/poodleshub-server'
   });
@@ -72,8 +68,6 @@ app.use('/api/breeds', breedsRouter);
 app.use('/api/reservations', reservationsRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/testimonials', testimonialsRouter);
-app.use('/api/puppy-comments', puppyCommentsRouter);
-app.use('/api/puppy-reviews', puppyReviewsRouter);
 
 // 404 handler
 app.use((req, res) => {

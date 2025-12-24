@@ -27,11 +27,21 @@ model Puppy {
   updatedAt    DateTime      @updatedAt
   applications Application[]
   reservations Reservation[]
-  comments     PuppyComment[]
   reviews      PuppyReview[]
 
   @@index([breed])
   @@index([status])
+}
+
+model PuppyReview {
+  id        String   @id @default(cuid())
+  puppyId   String
+  text      String
+  rating    Int?
+  adminName String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  puppy     Puppy    @relation(fields: [puppyId], references: [id], onDelete: Cascade)
 }
 
 model Breed {
@@ -148,36 +158,4 @@ model Testimonial {
   date       DateTime?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-}
-
-model PuppyComment {
-  id        String   @id @default(cuid())
-  puppyId   String
-  content   String
-  author    String   @default("Admin")
-  isVisible Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  puppy     Puppy    @relation(fields: [puppyId], references: [id], onDelete: Cascade)
-
-  @@index([puppyId])
-  @@index([isVisible])
-}
-
-model PuppyReview {
-  id        String   @id @default(cuid())
-  puppyId   String
-  name      String
-  email     String?
-  rating    Int
-  title     String?
-  content   String
-  isApproved Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  puppy     Puppy    @relation(fields: [puppyId], references: [id], onDelete: Cascade)
-
-  @@index([puppyId])
-  @@index([isApproved])
-  @@index([rating])
 }
