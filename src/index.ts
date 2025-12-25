@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { env } from './config/env.js';
 import puppiesRouter from './routes/puppies.js';
 import applicationsRouter from './routes/applications.js';
@@ -7,6 +8,7 @@ import breedsRouter from './routes/breeds.js';
 import reservationsRouter from './routes/reservations.js';
 import adminRouter from './routes/admin.js';
 import testimonialsRouter from './routes/testimonials.js';
+import reviewsRouter from './routes/reviews.js';
 
 const app = express();
 
@@ -19,6 +21,7 @@ const allowedOrigins = [
 ];
 
 // Middleware
+app.use(cookieParser());
 app.use(cors({
   origin: (origin, callback) => {
     // Log all origins for debugging
@@ -68,6 +71,7 @@ app.use('/api/breeds', breedsRouter);
 app.use('/api/reservations', reservationsRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/testimonials', testimonialsRouter);
+app.use('/api/reviews', reviewsRouter);
 
 // 404 handler
 app.use((req, res) => {
