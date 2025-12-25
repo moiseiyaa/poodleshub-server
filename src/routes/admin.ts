@@ -36,7 +36,19 @@ router.post('/login', async (req: Request, res: Response) => {
       { expiresIn: '2h' }
     );
 
-    res.json({ token, user: { email: admin.email, firstName: admin.firstName, lastName: admin.lastName, role: admin.role } });
+    // Set httpOnly cookie valid for 2h
+    res.cookie('admin_token', token, {
+      httpOnly: true,
+      secure: env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 2 * 60 * 60 * 1000, // 2h
+    });
+
+    res.json({
+      message: 'Logged in',
+      user: { email: admin.email, firstName: admin.firstName, lastName: admin.lastName, role: admin.role },
+      token,
+    });
   } catch (err) {
     console.error('Admin login error:', err);
     res.status(500).json({ error: 'Internal server error' });

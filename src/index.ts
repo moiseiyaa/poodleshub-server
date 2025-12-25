@@ -9,6 +9,8 @@ import reservationsRouter from './routes/reservations.js';
 import adminRouter from './routes/admin.js';
 import testimonialsRouter from './routes/testimonials.js';
 import reviewsRouter from './routes/reviews.js';
+import analyticsRouter from './routes/analytics.js';
+import exportRouter from './routes/export.js';
 
 const app = express();
 
@@ -72,6 +74,8 @@ app.use('/api/reservations', reservationsRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/testimonials', testimonialsRouter);
 app.use('/api/reviews', reviewsRouter);
+app.use('/api/analytics', analyticsRouter);
+app.use('/api/export', exportRouter);
 
 // 404 handler
 app.use((req, res) => {
