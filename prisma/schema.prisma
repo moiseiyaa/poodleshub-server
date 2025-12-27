@@ -7,57 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Puppy {
-  id           String        @id @default(cuid())
-  name         String
-  breed        String
-  gender       String
-  birthDate    DateTime
-  price        Float
-  status       String        @default("available")
-  color        String
-  generation   String
-  vaccinations String[]
-  notes        String?
-  images       String[]
-  damImage     String?
-  sireId       String?
-  damId        String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  applications Application[]
-  reservations Reservation[]
-  reviews      PuppyReview[]
-
-  @@index([breed])
-  @@index([status])
-}
-
-model PuppyReview {
-  id        String   @id @default(cuid())
-  puppyId   String
-  text      String
-  rating    Int?
-  adminName String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  puppy     Puppy    @relation(fields: [puppyId], references: [id], onDelete: Cascade)
-}
-
-model Breed {
-  id              String   @id @default(cuid())
-  name            String   @unique
-  description     String?
-  characteristics String?
-  averageSize     String?
-  temperament     String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+model AdminUser {
+  id          String    @id
+  email       String    @unique
+  password    String
+  firstName   String
+  lastName    String
+  role        String    @default("admin")
+  isActive    Boolean   @default(true)
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
 }
 
 model Application {
-  id                   String   @id @default(cuid())
-  displayId            String   @unique
+  id                   String   @id
   firstName            String
   lastName             String
   email                String
@@ -100,44 +64,28 @@ model Application {
   rejectionReason      String?
   puppyId              String?
   createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-  puppy                Puppy?   @relation(fields: [puppyId], references: [id])
+  updatedAt            DateTime
+  displayId            String   @unique
+  Puppy                Puppy?   @relation(fields: [puppyId], references: [id])
 
+  @@index([displayId])
   @@index([email])
   @@index([status])
-  @@index([displayId])
 }
 
-model Reservation {
-  id            String   @id @default(cuid())
-  puppyId       String
-  customerEmail String
-  customerName  String
-  status        String   @default("active")
-  expiresAt     DateTime
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  puppy         Puppy    @relation(fields: [puppyId], references: [id], onDelete: Cascade)
-
-  @@index([puppyId])
-  @@index([customerEmail])
-}
-
-model AdminUser {
-  id          String    @id @default(cuid())
-  email       String    @unique
-  password    String
-  firstName   String
-  lastName    String
-  role        String    @default("admin")
-  isActive    Boolean   @default(true)
-  lastLoginAt DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+model Breed {
+  id              String   @id
+  name            String   @unique
+  description     String?
+  characteristics String?
+  averageSize     String?
+  temperament     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime
 }
 
 model EmailLog {
-  id        String   @id @default(cuid())
+  id        String   @id
   to        String
   subject   String
   type      String
@@ -146,8 +94,71 @@ model EmailLog {
   createdAt DateTime @default(now())
 }
 
+model Puppy {
+  id           String        @id
+  name         String
+  breed        String
+  gender       String
+  birthDate    DateTime
+  price        Float
+  status       String        @default("available")
+  color        String
+  generation   String
+  vaccinations String[]
+  notes        String?
+  images       String[]
+  sireId       String?
+  damId        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime
+  damImage     String?
+  Application  Application[]
+  Reservation  Reservation[]
+
+  @@index([breed])
+  @@index([status])
+}
+
+model Reservation {
+  id            String   @id
+  puppyId       String
+  customerEmail String
+  customerName  String
+  status        String   @default("active")
+  expiresAt     DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime
+  Puppy         Puppy    @relation(fields: [puppyId], references: [id], onDelete: Cascade)
+
+  @@index([customerEmail])
+  @@index([puppyId])
+}
+
+model SeoMeta {
+  id                String    @id
+  entityType        String
+  entityId          String
+  metaTitle         String?
+  metaDescription   String?
+  focusKeywords     String[]
+  slug              String?   @unique
+  canonicalUrl      String?
+  robots            String    @default("INDEX")
+  ogTitle           String?
+  ogDescription     String?
+  ogImage           String?
+  schemaType        String?
+  customMeta        Json?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime
+  
+  @@index([entityId])
+  @@index([entityType])
+  @@index([slug])
+}
+
 model Testimonial {
-  id         String   @id @default(cuid())
+  id         String    @id
   name       String
   location   String?
   rating     Int
@@ -156,6 +167,6 @@ model Testimonial {
   puppyBreed String?
   initials   String?
   date       DateTime?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime
 }

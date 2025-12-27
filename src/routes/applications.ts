@@ -59,14 +59,19 @@ router.post('/', async (req: Request, res: Response) => {
     // Generate unique 4-digit display ID
     const displayId = await generateUniqueDisplayId();
 
+    // Build data object compliant with Prisma types
+    const appData = {
+      ...validatedData,
+      displayId,
+      breedChoices: validatedData.breedChoices,
+      preferredColors: [],
+      preferredCoatTypes: [],
+    };
+
+    // Keep scalar puppyId; no relation needed
+
     const application = await prisma.application.create({
-      data: {
-        ...validatedData,
-        displayId,
-        breedChoices: validatedData.breedChoices,
-        preferredColors: [],
-        preferredCoatTypes: [],
-      },
+      data: appData as any,
     });
 
     // Get puppy name if available
@@ -132,7 +137,6 @@ router.get('/:id', async (req: Request, res: Response) => {
 
     const application = await prisma.application.findUnique({
       where: { id },
-      include: { puppy: true },
     });
 
     if (!application) {
@@ -161,7 +165,6 @@ router.get('/', async (req: Request, res: Response) => {
 
     const applications = await prisma.application.findMany({
       where,
-      include: { puppy: true },
       orderBy: { createdAt: 'desc' },
     });
 

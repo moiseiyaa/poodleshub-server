@@ -11,6 +11,7 @@ import testimonialsRouter from './routes/testimonials.js';
 import reviewsRouter from './routes/reviews.js';
 import analyticsRouter from './routes/analytics.js';
 import exportRouter from './routes/export.js';
+import seoRouter from './routes/seo.js';
 
 const app = express();
 
@@ -60,7 +61,8 @@ app.get('/', (req, res) => {
       applications: '/api/applications',
       breeds: '/api/breeds',
       reservations: '/api/reservations',
-      admin: '/api/admin'
+      admin: '/api/admin',
+      seo: '/api/seo'
     },
     documentation: 'https://github.com/moiseiyaa/poodleshub-server'
   });
@@ -76,6 +78,8 @@ app.use('/api/testimonials', testimonialsRouter);
 app.use('/api/reviews', reviewsRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/export', exportRouter);
+app.use('/api/admin/seo', seoRouter);
+app.use('/api/seo', seoRouter);
 
 // 404 handler
 app.use((req, res) => {

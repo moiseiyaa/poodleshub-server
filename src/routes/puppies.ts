@@ -27,7 +27,7 @@ function verifyAdminJWT(req: Request, res: Response, next: Function) {
 router.get('/', async (req, res) => {
   try {
     const { breed, status, gender, color } = req.query;
-
+    
     const where: Record<string, any> = {};
 
     if (breed) where.breed = breed as string;

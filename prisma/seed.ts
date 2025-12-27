@@ -1,7 +1,5 @@
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
+import { prisma } from '../src/lib/prisma.js';
 
 async function main() {
   console.log('🌱 Seeding database...');
@@ -64,7 +62,12 @@ async function main() {
       };
       
       return prisma.breed.create({
-        data: { name, ...breedData[name] },
+        data: { 
+          id: name.toLowerCase().replace(/\s+/g, '-'),
+          name, 
+          ...breedData[name],
+          updatedAt: new Date()
+        },
       });
     })
   );
@@ -74,6 +77,7 @@ async function main() {
   // Puppy data to seed
   const puppyData = [
     {
+      id: 'puppy-sophie-1',
       name: 'Sophie',
       breed: 'Poodle',
       gender: 'female',
@@ -91,6 +95,7 @@ async function main() {
       damImage: '/images/parents/poodle-dam-1.jpg',
     },
     {
+      id: 'puppy-oliver-1',
       name: 'Oliver',
       breed: 'Poodle',
       gender: 'male',
@@ -108,6 +113,7 @@ async function main() {
       damImage: '/images/parents/poodle-dam-2.jpg',
     },
     {
+      id: 'puppy-lily-1',
       name: 'Lily',
       breed: 'Poodle',
       gender: 'female',
@@ -125,6 +131,7 @@ async function main() {
       damImage: '/images/parents/poodle-dam-3.jpg',
     },
     {
+      id: 'puppy-luna-1',
       name: 'Luna',
       breed: 'Maltipoo',
       gender: 'female',
@@ -142,6 +149,7 @@ async function main() {
       damImage: '/images/parents/maltipoo-dam-1.jpg',
     },
     {
+      id: 'puppy-max-1',
       name: 'Max',
       breed: 'Goldendoodle',
       gender: 'male',
@@ -159,6 +167,7 @@ async function main() {
       damImage: '/images/parents/goldendoodle-dam-1.jpg',
     },
     {
+      id: 'puppy-bella-1',
       name: 'Bella',
       breed: 'Labradoodle',
       gender: 'female',
@@ -175,6 +184,7 @@ async function main() {
       damImage: '/images/parents/labradoodle-dam-1.jpg',
     },
     {
+      id: 'puppy-charlie-1',
       name: 'Charlie',
       breed: 'Bernedoodle',
       gender: 'male',
@@ -192,6 +202,7 @@ async function main() {
       damImage: '/images/parents/bernedoodle-dam-1.jpg',
     },
     {
+      id: 'puppy-daisy-1',
       name: 'Daisy',
       breed: 'Maltipoo',
       gender: 'female',
@@ -209,6 +220,7 @@ async function main() {
       damImage: '/images/parents/maltipoo-dam-2.jpg',
     },
     {
+      id: 'puppy-cooper-1',
       name: 'Cooper',
       breed: 'Goldendoodle',
       gender: 'male',
@@ -226,6 +238,7 @@ async function main() {
       damImage: '/images/parents/goldendoodle-dam-1.jpg',
     },
     {
+      id: 'puppy-princess-1',
       name: 'Princess',
       breed: 'Maltese',
       gender: 'female',
@@ -244,6 +257,7 @@ async function main() {
       damImage: '/images/parents/maltese-dam-1.jpg',
     },
     {
+      id: 'puppy-bentley-1',
       name: 'Bentley',
       breed: 'Maltese',
       gender: 'male',
@@ -261,6 +275,7 @@ async function main() {
       damImage: '/images/parents/maltese-dam-2.jpg',
     },
     {
+      id: 'puppy-angel-1',
       name: 'Angel',
       breed: 'Labradoodle',
       gender: 'female',
@@ -279,6 +294,7 @@ async function main() {
       damImage: '/images/parents/labradoodle-dam-1.jpg',
     },
     {
+      id: 'puppy-ace-1',
       name: 'Ace',
       breed: 'Border Collie',
       gender: 'male',
@@ -297,6 +313,7 @@ async function main() {
       damImage: '/images/parents/border-collie-dam-1.jpg',
     },
     {
+      id: 'puppy-jasper-lizzy-1',
       name: 'Jasper & Lizzy',
       breed: 'Poodle',
       gender: 'pair',
@@ -314,6 +331,7 @@ async function main() {
       damImage: '/images/parents/poodle-dam-1.jpg',
     },
     {
+      id: 'puppy-terry-1',
       name: 'Terry',
       breed: 'Cardigan Welsh Corgi',
       gender: 'male',
@@ -352,7 +370,12 @@ async function main() {
       continue;
     }
 
-    const puppy = await prisma.puppy.create({ data });
+    const puppy = await prisma.puppy.create({ 
+      data: {
+        ...data,
+        updatedAt: new Date()
+      } 
+    });
     createdPuppies.push(puppy);
   }
 
@@ -368,21 +391,243 @@ async function main() {
   const existingAdmin = await prisma.adminUser.findUnique({ where: { email: adminEmail } });
   
   if (!existingAdmin) {
-    const plainPassword = 'password123';
-    const hashed = await bcrypt.hash(plainPassword, 10);
     await prisma.adminUser.create({
       data: {
-        email: adminEmail,
-        password: hashed,
-        firstName: 'Admin',
-        lastName: 'User',
-        role: 'admin',
+        id: 'admin-user-1',
+        email: "admin@puppyhubusa.com",
+        password: "$2a$10$rdWobd4rLQFUhEc6sHsN3.LHZUN944sLDtkFDFEknyVRRdZOElape",
+        firstName: "Admin",
+        lastName: "User",
+        role: "admin",
         isActive: true,
+        updatedAt: new Date()
       }
     });
-    console.log(`👤 Admin Created: ${adminEmail} / ${plainPassword}`);
+    console.log(`👤 Admin Created: ${adminEmail}`);
   } else {
     console.log(`👤 Admin already exists: ${adminEmail}`);
+  }
+
+  // Create SEO metadata
+  const seoData = [
+    {
+      id: 'seo-home-1',
+      entityType: 'PAGE',
+      entityId: 'home',
+      metaTitle: 'PuppyHub USA - Premium Puppies & Designer Dogs',
+      metaDescription: 'Find your perfect companion at PuppyHub USA. Premium Poodles, Doodles, and designer puppies with health guarantees.',
+      focusKeywords: ['puppyhub usa', 'premium puppies', 'designer dogs', 'poodle puppies', 'goldendoodle puppies'],
+      slug: 'home',
+      canonicalUrl: 'https://puppyhubusa.com',
+      robots: 'INDEX',
+      ogTitle: 'PuppyHub USA - Premium Puppies',
+      ogDescription: 'Premium puppies with health guarantees',
+      ogImage: 'https://puppyhubusa.com/images/og-home.jpg',
+      schemaType: 'ORGANIZATION',
+      updatedAt: new Date()
+    },
+    {
+      id: 'seo-puppies-1',
+      entityType: 'PAGE',
+      entityId: 'puppies',
+      metaTitle: 'Available Puppies for Sale - PuppyHub USA',
+      metaDescription: 'Browse our selection of healthy, premium puppies including Poodles, Goldendoodles, Labradoodles, and more. All puppies come with health guarantees.',
+      focusKeywords: ['puppies for sale', 'poodle puppies', 'goldendoodle puppies', 'labradoodle puppies', 'maltipoo puppies'],
+      slug: 'puppies',
+      canonicalUrl: 'https://puppyhubusa.com/puppies',
+      robots: 'INDEX',
+      ogTitle: 'Available Puppies - PuppyHub USA',
+      ogDescription: 'Browse our selection of healthy, premium puppies',
+      ogImage: 'https://puppyhubusa.com/images/og-puppies.jpg',
+      schemaType: 'COLLECTION_PAGE',
+      updatedAt: new Date()
+    },
+    {
+      id: 'seo-about-1',
+      entityType: 'PAGE',
+      entityId: 'about',
+      metaTitle: 'About PuppyHub USA - Our Mission & Values',
+      metaDescription: 'Learn about PuppyHub USA\'s commitment to providing healthy, well-socialized premium puppies with lifetime health guarantees.',
+      focusKeywords: ['about puppyhub', 'puppyhub mission', 'puppy guarantee', 'reputable breeder'],
+      slug: 'about',
+      canonicalUrl: 'https://puppyhubusa.com/about',
+      robots: 'INDEX',
+      ogTitle: 'About PuppyHub USA',
+      ogDescription: 'Learn about our commitment to healthy puppies',
+      ogImage: 'https://puppyhubusa.com/images/og-about.jpg',
+      schemaType: 'ABOUT_PAGE',
+      updatedAt: new Date()
+    },
+    {
+      id: 'seo-contact-1',
+      entityType: 'PAGE',
+      entityId: 'contact',
+      metaTitle: 'Contact PuppyHub USA - Get in Touch',
+      metaDescription: 'Contact PuppyHub USA to find your perfect puppy. Call us or fill out our contact form for inquiries about our premium puppies.',
+      focusKeywords: ['contact puppyhub', 'puppyhub phone', 'puppy questions', 'buy puppy'],
+      slug: 'contact',
+      canonicalUrl: 'https://puppyhubusa.com/contact',
+      robots: 'INDEX',
+      ogTitle: 'Contact PuppyHub USA',
+      ogDescription: 'Get in touch to find your perfect puppy',
+      ogImage: 'https://puppyhubusa.com/images/og-contact.jpg',
+      schemaType: 'CONTACT_PAGE',
+      updatedAt: new Date()
+    }
+  ];
+
+  for (const seo of seoData) {
+    const existing = await prisma.seoMeta.findUnique({
+      where: { id: seo.id }
+    });
+
+    if (!existing) {
+      await prisma.seoMeta.create({
+        data: seo
+      });
+      console.log(`🔍 Created SEO: ${seo.metaTitle}`);
+    } else {
+      console.log(`🔍 SEO already exists: ${seo.metaTitle}`);
+    }
+  }
+
+  // Create testimonials for random puppies
+  const testimonialData = [
+    {
+      id: 'testimonial-1',
+      name: 'Sarah Johnson',
+      location: 'Miami, FL',
+      rating: 5,
+      text: 'We got our Goldendoodle Max from PuppyHub USA and he is absolutely perfect! Healthy, well-socialized, and already part of our family. The health guarantee gave us peace of mind.',
+      puppyName: 'Max',
+      puppyBreed: 'Goldendoodle',
+      initials: 'SJ',
+      date: new Date('2025-11-15'),
+      updatedAt: new Date()
+    },
+    {
+      id: 'testimonial-2',
+      name: 'Michael Chen',
+      location: 'New York, NY',
+      rating: 5,
+      text: 'Sophie is the smartest Poodle we\'ve ever had! The team at PuppyHub USA was incredibly helpful throughout the process. Highly recommend!',
+      puppyName: 'Sophie',
+      puppyBreed: 'Poodle',
+      initials: 'MC',
+      date: new Date('2025-10-20'),
+      updatedAt: new Date()
+    },
+    {
+      id: 'testimonial-3',
+      name: 'Emily Rodriguez',
+      location: 'Austin, TX',
+      rating: 4,
+      text: 'Our Labradoodle Bella brings so much joy to our family. PuppyHub USA made the entire adoption process smooth and worry-free.',
+      puppyName: 'Bella',
+      puppyBreed: 'Labradoodle',
+      initials: 'ER',
+      date: new Date('2025-09-10'),
+      updatedAt: new Date()
+    },
+    {
+      id: 'testimonial-4',
+      name: 'David Kim',
+      location: 'Seattle, WA',
+      rating: 5,
+      text: 'Charlie the Bernedoodle is amazing! Great with kids, other pets, and has the best temperament. Thank you PuppyHub USA!',
+      puppyName: 'Charlie',
+      puppyBreed: 'Bernedoodle',
+      initials: 'DK',
+      date: new Date('2025-08-25'),
+      updatedAt: new Date()
+    },
+    {
+      id: 'testimonial-5',
+      name: 'Jessica Taylor',
+      location: 'Boston, MA',
+      rating: 5,
+      text: 'Luna our Maltipoo is absolutely adorable and so well-behaved. The health guarantee and support from PuppyHub USA has been exceptional.',
+      puppyName: 'Luna',
+      puppyBreed: 'Maltipoo',
+      initials: 'JT',
+      date: new Date('2025-07-30'),
+      updatedAt: new Date()
+    },
+    {
+      id: 'testimonial-6',
+      name: 'Robert Anderson',
+      location: 'Denver, CO',
+      rating: 4,
+      text: 'Cooper is such a loving Goldendoodle! The team answered all our questions and made sure we were prepared. Great experience!',
+      puppyName: 'Cooper',
+      puppyBreed: 'Goldendoodle',
+      initials: 'RA',
+      date: new Date('2025-11-05'),
+      updatedAt: new Date()
+    },
+    {
+      id: 'testimonial-7',
+      name: 'Lisa Wang',
+      location: 'San Francisco, CA',
+      rating: 5,
+      text: 'Princess the Maltese is perfect for our apartment. So gentle and well-trained. PuppyHub USA really cares about their puppies!',
+      puppyName: 'Princess',
+      puppyBreed: 'Maltese',
+      initials: 'LW',
+      date: new Date('2025-09-20'),
+      updatedAt: new Date()
+    },
+    {
+      id: 'testimonial-8',
+      name: 'James Miller',
+      location: 'Chicago, IL',
+      rating: 5,
+      text: 'Ace our Border Collie is incredibly intelligent and energetic. Exactly what we wanted for our active family!',
+      puppyName: 'Ace',
+      puppyBreed: 'Border Collie',
+      initials: 'JM',
+      date: new Date('2025-06-15'),
+      updatedAt: new Date()
+    },
+    {
+      id: 'testimonial-9',
+      name: 'Maria Garcia',
+      location: 'Phoenix, AZ',
+      rating: 4,
+      text: 'Jasper & Lizzy are bonded siblings and we couldn\'t be happier! PuppyHub USA understood our needs perfectly.',
+      puppyName: 'Jasper & Lizzy',
+      puppyBreed: 'Poodle',
+      initials: 'MG',
+      date: new Date('2025-10-10'),
+      updatedAt: new Date()
+    },
+    {
+      id: 'testimonial-10',
+      name: 'Thomas Brown',
+      location: 'Nashville, TN',
+      rating: 5,
+      text: 'Terry the Corgi has stolen our hearts! So playful and already learning tricks. Thank you PuppyHub USA!',
+      puppyName: 'Terry',
+      puppyBreed: 'Cardigan Welsh Corgi',
+      initials: 'TB',
+      date: new Date('2025-12-01'),
+      updatedAt: new Date()
+    }
+  ];
+
+  for (const testimonial of testimonialData) {
+    const existing = await prisma.testimonial.findUnique({
+      where: { id: testimonial.id }
+    });
+
+    if (!existing) {
+      await prisma.testimonial.create({
+        data: testimonial
+      });
+      console.log(`⭐ Created testimonial: ${testimonial.name}`);
+    } else {
+      console.log(`📝 Testimonial already exists: ${testimonial.name}`);
+    }
   }
 
   console.log('🎉 Database seeded successfully!');
