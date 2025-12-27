@@ -36,10 +36,12 @@ router.post('/', async (req: Request, res: Response) => {
 
     const reservation = await prisma.reservation.create({
       data: {
+        id: `res_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         puppyId,
         customerEmail,
         customerName,
         expiresAt,
+        updatedAt: new Date(),
       },
     });
 
@@ -63,7 +65,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 
     const reservation = await prisma.reservation.findUnique({
       where: { id },
-      include: { puppy: true },
+      include: { Puppy: true },
     });
 
     if (!reservation) {
@@ -92,7 +94,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     const reservations = await prisma.reservation.findMany({
       where,
-      include: { puppy: true },
+      include: { Puppy: true },
       orderBy: { createdAt: 'desc' },
     });
 

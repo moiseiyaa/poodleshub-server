@@ -24,7 +24,7 @@ router.get('/', async (req: Request, res: Response) => {
     const { puppyId } = req.query;
     const where: any = {};
     if (puppyId) where.puppyId = puppyId as string;
-    const reviews = await prisma.puppyReview.findMany({ where, orderBy: { createdAt: 'desc' } });
+    const reviews = await prisma.testimonial.findMany({ where, orderBy: { createdAt: 'desc' } });
     res.json(reviews);
   } catch (err) {
     console.error('Error fetching reviews:', err);
@@ -39,12 +39,15 @@ router.post('/', verifyAdminJWT, async (req: Request, res: Response) => {
   try {
     const { puppyId, text, rating, adminName } = req.body;
     if (!puppyId || !text) return res.status(400).json({ error: 'puppyId and text are required' });
-    const review = await prisma.puppyReview.create({
+    const review = await prisma.testimonial.create({
       data: {
-        puppyId,
+        id: `review_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        name: adminName || 'Anonymous',
         text,
-        rating: rating ? Number(rating) : null,
-        adminName,
+        rating: rating ? Number(rating) : 5,
+        puppyName: puppyId || 'Unknown',
+        createdAt: new Date(),
+        updatedAt: new Date()
       },
     });
     res.status(201).json(review);
@@ -59,7 +62,7 @@ router.post('/', verifyAdminJWT, async (req: Request, res: Response) => {
  */
 router.delete('/:id', verifyAdminJWT, async (req: Request, res: Response) => {
   try {
-    await prisma.puppyReview.delete({ where: { id: req.params.id } });
+    await prisma.testimonial.delete({ where: { id: req.params.id } });
     res.json({ message: 'Review deleted' });
   } catch (err: any) {
     if (err.code === 'P2025') return res.status(404).json({ error: 'Review not found' });

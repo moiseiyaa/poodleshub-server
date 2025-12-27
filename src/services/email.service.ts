@@ -42,10 +42,12 @@ class EmailService {
       // Log successful email
       await prisma.emailLog.create({
         data: {
+          id: `email_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           to: options.to,
           subject: options.subject,
           type: options.type,
           status: 'sent',
+          createdAt: new Date()
         },
       });
 
@@ -56,11 +58,13 @@ class EmailService {
       // Log failed email
       await prisma.emailLog.create({
         data: {
+          id: `email_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           to: options.to,
           subject: options.subject,
           type: options.type,
           status: 'failed',
           error: errorMessage,
+          createdAt: new Date()
         },
       });
 

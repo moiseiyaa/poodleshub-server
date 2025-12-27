@@ -1,5 +1,5 @@
 import express from 'express';
-import { PrismaClient, EntityType, Robots, SchemaType } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { 
   createSeoMetaSchema, 
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
     const { entityType, page = 1, limit = 50 } = req.query;
     
     
-    const where = entityType ? { entityType: entityType as EntityType } : {};
+    const where = entityType ? { entityType: entityType as string } : {};
     
     const [seoMetas, total] = await Promise.all([
       prisma.seoMeta.findMany({
@@ -47,8 +47,8 @@ router.get('/', async (req, res) => {
       return res.json({
         data: [],
         pagination: {
-          page: Number(page),
-          limit: Number(limit),
+          page: Number(req.query.page) || 1,
+          limit: Number(req.query.limit) || 50,
           total: 0,
           pages: 0
         },
@@ -87,7 +87,7 @@ router.get('/entity/:entityType/:entityId', async (req, res) => {
     
     const seoMeta = await prisma.seoMeta.findFirst({
       where: {
-        entityType: entityType as EntityType,
+        entityType: entityType as string,
         entityId: entityId
       }
     });
@@ -224,7 +224,12 @@ router.post('/', async (req, res) => {
     }
 
     const seoMeta = await prisma.seoMeta.create({
-      data: validation
+      data: {
+        id: `seo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        ...validation,
+        entityId: validation.entityId || `${validation.entityType}_${Date.now()}`,
+        updatedAt: new Date()
+      }
     });
 
     res.status(201).json({ 
@@ -272,7 +277,10 @@ router.put('/:id', async (req, res) => {
 
     const seoMeta = await prisma.seoMeta.update({
       where: { id },
-      data: validation
+      data: {
+        ...validation,
+        updatedAt: new Date()
+      }
     });
 
     res.json({ 
@@ -360,7 +368,7 @@ router.get('/public/:entityType/:entityId', async (req, res) => {
     
     const seoMeta = await prisma.seoMeta.findFirst({
       where: {
-        entityType: entityType as EntityType,
+        entityType: entityType as string,
         entityId: entityId,
         robots: 'INDEX' // Only return indexable content
       },

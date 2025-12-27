@@ -168,6 +168,7 @@ router.post('/', verifyAdminJWT, async (req: Request, res: Response) => {
 
     const puppy = await prisma.puppy.create({
       data: {
+        id: `puppy_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         name,
         breed,
         gender,
@@ -182,6 +183,7 @@ router.post('/', verifyAdminJWT, async (req: Request, res: Response) => {
         damImage,
         sireId,
         damId,
+        updatedAt: new Date(),
       },
     });
 
