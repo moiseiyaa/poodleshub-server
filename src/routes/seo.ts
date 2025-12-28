@@ -5,7 +5,8 @@ import {
   createSeoMetaSchema, 
   updateSeoMetaSchema, 
   slugUniquenessSchema 
-} from '../schemas/seo.schema';
+// @ts-ignore - compiled JS extension
+} from '../schemas/seo.schema.js';
 import { SeoValidationService } from '../services/seo-validation.service';
 
 const router = express.Router();
