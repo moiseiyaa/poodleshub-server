@@ -7,7 +7,8 @@ import {
   slugUniquenessSchema 
 // @ts-ignore - compiled JS extension
 } from '../schemas/seo.schema.js';
-import { SeoValidationService } from '../services/seo-validation.service';
+// @ts-ignore - compiled JS extension
+import { SeoValidationService } from '../services/seo-validation.service.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
