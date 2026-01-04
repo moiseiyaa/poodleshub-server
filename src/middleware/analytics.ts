@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../lib/prisma';
 
+// TypeScript workaround: AnalyticsEvent model may not be in generated types yet
+type PrismaAnalytics = typeof prisma & { analyticsEvent?: any };
+const analytics = prisma as PrismaAnalytics;
+
 /**
  * Analytics middleware that logs page views and visitor events
  * Runs on every request to track real-time user activity
@@ -44,7 +48,7 @@ export const analyticsMiddleware = async (req: Request, res: Response, next: Nex
   // Fire-and-forget logging (don't block response)
   setImmediate(async () => {
     try {
-      await prisma.analyticsEvent.create({
+      await analytics.analyticsEvent!.create({
         data: {
           eventType,
           pathname,

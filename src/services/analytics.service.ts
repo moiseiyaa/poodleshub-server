@@ -5,6 +5,11 @@ import { prisma } from '../lib/prisma';
  * Provides dashboard metrics directly from database
  */
 
+// TypeScript workaround: AnalyticsEvent model may not be in generated types yet
+// Cast to any for now, will be properly typed once Prisma regenerates
+type PrismaAnalytics = typeof prisma & { analyticsEvent?: any };
+const analytics = prisma as PrismaAnalytics;
+
 export interface AnalyticsSummary {
   pageViews: number;
   uniqueVisitors: number;
@@ -21,7 +26,7 @@ export const getAnalyticsSummary = async (days: number = 7): Promise<AnalyticsSu
   const sinceDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
   // Total page views
-  const pageViews = await prisma.analyticsEvent.count({
+  const pageViews = await analytics.analyticsEvent!.count({
     where: {
       timestamp: { gte: sinceDate },
       eventType: 'pageView'
@@ -29,19 +34,19 @@ export const getAnalyticsSummary = async (days: number = 7): Promise<AnalyticsSu
   });
 
   // Unique visitors (distinct users)
-  const uniqueVisitors = await prisma.analyticsEvent.findMany({
+  const uniqueVisitors = await analytics.analyticsEvent!.findMany({
     where: {
       timestamp: { gte: sinceDate }
     },
     distinct: ['userId'],
     select: { userId: true }
-  }).then(events => {
-    const uniqueIds = new Set(events.map(e => e.userId).filter(Boolean));
+  }).then((events: Array<{ userId: string | null }>) => {
+    const uniqueIds = new Set(events.map((e: { userId: string | null }) => e.userId).filter(Boolean));
     return uniqueIds.size;
   });
 
   // Top pages by view count
-  const topPagesRaw = await prisma.analyticsEvent.groupBy({
+  const topPagesRaw = await analytics.analyticsEvent!.groupBy({
     by: ['pathname'],
     _count: { id: true },
     where: {
@@ -52,13 +57,13 @@ export const getAnalyticsSummary = async (days: number = 7): Promise<AnalyticsSu
     take: 10
   });
 
-  const topPages = topPagesRaw.map(p => ({
+  const topPages = topPagesRaw.map((p: { pathname: string; _count: { id: number } }) => ({
     path: p.pathname,
     views: p._count.id
   }));
 
   // Event type breakdown
-  const eventBreakdownRaw = await prisma.analyticsEvent.groupBy({
+  const eventBreakdownRaw = await analytics.analyticsEvent!.groupBy({
     by: ['eventType'],
     _count: { id: true },
     where: {
@@ -67,7 +72,7 @@ export const getAnalyticsSummary = async (days: number = 7): Promise<AnalyticsSu
   });
 
   const eventBreakdown: Record<string, number> = {};
-  eventBreakdownRaw.forEach(e => {
+  eventBreakdownRaw.forEach((e: { eventType: string; _count: { id: number } }) => {
     eventBreakdown[e.eventType] = e._count.id;
   });
 
@@ -90,7 +95,7 @@ export const getAnalyticsSummary = async (days: number = 7): Promise<AnalyticsSu
 export const getPageViewsTrend = async (days: number = 7) => {
   const sinceDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
-  const events = await prisma.analyticsEvent.findMany({
+  const events = await analytics.analyticsEvent!.findMany({
     where: {
       timestamp: { gte: sinceDate },
       eventType: 'pageView'
@@ -100,7 +105,7 @@ export const getPageViewsTrend = async (days: number = 7) => {
 
   // Group by day
   const trend: Record<string, number> = {};
-  events.forEach(e => {
+  events.forEach((e: { timestamp: Date }) => {
     const day = e.timestamp.toISOString().split('T')[0];
     trend[day] = (trend[day] || 0) + 1;
   });
@@ -150,7 +155,7 @@ export const getConversionFunnel = async (days: number = 30) => {
 export const getPopularPages = async (limit: number = 10, days: number = 7) => {
   const sinceDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
-  const pages = await prisma.analyticsEvent.groupBy({
+  const pages = await analytics.analyticsEvent!.groupBy({
     by: ['pathname'],
     _count: { id: true },
     where: {
@@ -161,7 +166,7 @@ export const getPopularPages = async (limit: number = 10, days: number = 7) => {
     take: limit
   });
 
-  return pages.map(p => ({
+  return pages.map((p: { pathname: string; _count: { id: number } }) => ({
     pathname: p.pathname,
     views: p._count.id
   }));
@@ -173,7 +178,7 @@ export const getPopularPages = async (limit: number = 10, days: number = 7) => {
 export const getEventsByType = async (eventType: string, days: number = 7) => {
   const sinceDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
-  return prisma.analyticsEvent.findMany({
+  return analytics.analyticsEvent!.findMany({
     where: {
       timestamp: { gte: sinceDate },
       eventType
@@ -198,7 +203,7 @@ export const logEvent = async (
   pathname: string,
   data?: { userId?: string; metadata?: Record<string, any>; userAgent?: string }
 ) => {
-  return prisma.analyticsEvent.create({
+  return analytics.analyticsEvent!.create({
     data: {
       eventType,
       pathname,
@@ -216,7 +221,7 @@ export const logEvent = async (
 export const clearOldAnalytics = async (olderThanDays: number = 90) => {
   const cutoffDate = new Date(Date.now() - olderThanDays * 24 * 60 * 60 * 1000);
 
-  const result = await prisma.analyticsEvent.deleteMany({
+  const result = await analytics.analyticsEvent!.deleteMany({
     where: {
       timestamp: { lt: cutoffDate }
     }
