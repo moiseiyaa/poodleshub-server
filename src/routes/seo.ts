@@ -252,10 +252,30 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const validation = updateSeoMetaSchema.parse(req.body);
-    
-    // Validate SEO quality
-    const seoValidation = SeoValidationService.validateSeoData(validation);
+    // Sanitize incoming body: convert explicit nulls to types Zod expects
+    const rawBody: any = { ...(req.body || {}) };
+    const emptyStringFields = ['canonicalUrl', 'ogImage'];
+    const undefFields = ['metaTitle', 'metaDescription', 'ogTitle', 'ogDescription', 'slug', 'entityId', 'entityType', 'robots', 'schemaType'];
+
+    for (const key of Object.keys(rawBody)) {
+      if (rawBody[key] === null) {
+        if (emptyStringFields.includes(key)) rawBody[key] = '';
+        else if (key === 'focusKeywords') rawBody[key] = [];
+        else rawBody[key] = undefined;
+      }
+    }
+
+    const validation = updateSeoMetaSchema.parse(rawBody);
+    // Load existing record and merge with incoming partial update
+    const existingSeo = await prisma.seoMeta.findUnique({ where: { id } });
+    if (!existingSeo) {
+      return res.status(404).json({ error: 'SEO metadata not found' });
+    }
+
+    const merged = { ...existingSeo, ...validation };
+
+    // Validate SEO quality against the merged data so partial updates are allowed
+    const seoValidation = SeoValidationService.validateSeoData(merged as any);
     if (!seoValidation.isValid && seoValidation.errors.length > 0) {
       return res.status(400).json({ 
         error: 'SEO validation failed',
