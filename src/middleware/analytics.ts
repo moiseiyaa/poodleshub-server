@@ -51,7 +51,7 @@ export const analyticsMiddleware = async (req: Request, res: Response, next: Nex
           userId: userId || null,
           userAgent: userAgent?.substring(0, 500) || null,
           referer: referer?.substring(0, 500) || null,
-          metadata: Object.keys(metadata).length > 0 ? metadata : null
+          metadata: Object.keys(metadata).length > 0 ? metadata : undefined
         }
       });
     } catch (err) {

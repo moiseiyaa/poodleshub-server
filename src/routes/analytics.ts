@@ -181,5 +181,8 @@ router.post('/cleanup', async (req: Request, res: Response) => {
   } catch (err) {
     console.error('Error cleaning up analytics:', err);
     res.status(500).json({ error: 'Failed to cleanup analytics' });
+  }
+});
 
 export default router;
+

@@ -204,7 +204,7 @@ export const logEvent = async (
       pathname,
       userId: data?.userId || null,
       userAgent: data?.userAgent || null,
-      metadata: data?.metadata || null
+      metadata: data?.metadata && Object.keys(data.metadata).length > 0 ? data.metadata : undefined
     }
   });
 };
