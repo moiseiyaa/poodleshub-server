@@ -186,3 +186,20 @@ model Blog {
   @@index([slug])
   @@index([published])
 }
+model AnalyticsEvent {
+  id          String   @id @default(cuid())
+  eventType   String   // pageView, conversion, inquiry, etc
+  pathname    String   // Route or page path
+  userId      String?  // Optional user/session identifier
+  timestamp   DateTime @default(now())
+  userAgent   String?  // Browser user agent
+  referer     String?  // Referring page
+  country     String?  // GeoIP country
+  metadata    Json?    // Extra data (puppyId, formData, etc)
+  createdAt   DateTime @default(now())
+
+  @@index([timestamp])
+  @@index([pathname])
+  @@index([eventType])
+  @@index([userId])
+}

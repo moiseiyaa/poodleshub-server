@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { env } from './config/env.js';
+import { analyticsMiddleware } from './middleware/analytics.js';
 import puppiesRouter from './routes/puppies.js';
 import applicationsRouter from './routes/applications.js';
 import breedsRouter from './routes/breeds.js';
@@ -43,6 +44,9 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Analytics middleware - logs all requests (except skipped paths)
+app.use(analyticsMiddleware);
 
 // Health check
 app.get('/health', (req, res) => {
