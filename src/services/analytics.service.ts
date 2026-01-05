@@ -120,19 +120,19 @@ export const getConversionFunnel = async (days: number = 30) => {
   const sinceDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 
   const [pageViews, inquiries, purchases] = await Promise.all([
-    prisma.analyticsEvent.count({
+    analytics.analyticsEvent!.count({
       where: {
         timestamp: { gte: sinceDate },
         eventType: 'pageView'
       }
     }),
-    prisma.analyticsEvent.count({
+    analytics.analyticsEvent!.count({
       where: {
         timestamp: { gte: sinceDate },
         eventType: 'inquiry'
       }
     }),
-    prisma.analyticsEvent.count({
+    analytics.analyticsEvent!.count({
       where: {
         timestamp: { gte: sinceDate },
         eventType: 'purchase'
