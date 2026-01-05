@@ -19,6 +19,8 @@ const app = express();
 
 const allowedOrigins = [
   env.FRONTEND_URL,
+  'https://puppyhubusa.com',
+  'https://www.puppyhubusa.com',
   'http://localhost:3000',
   'http://127.0.0.1:3000',
   'http://localhost:3001',
