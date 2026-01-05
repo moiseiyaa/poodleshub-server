@@ -42,10 +42,29 @@ app.use(cors({
       callback(new Error('Not allowed by CORS'));
     }
   },
+  // Ensure preflight returns a friendly success status
+  optionsSuccessStatus: 204,
+  preflightContinue: false,
   credentials: true,
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Explicit OPTIONS preflight handler to ensure Access-Control headers
+// are returned even for requests that would otherwise be blocked.
+app.options('*', (req, res) => {
+  const origin = req.headers.origin as string | undefined;
+
+  if (!origin || allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', req.headers['access-control-request-headers'] || 'Content-Type,Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    return res.sendStatus(204);
+  }
+
+  return res.sendStatus(403);
+});
 
 // Analytics middleware - logs all requests (except skipped paths)
 app.use(analyticsMiddleware);

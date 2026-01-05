@@ -22,6 +22,9 @@ export const analyticsMiddleware = async (req: Request, res: Response, next: Nex
   const shouldSkip = skipPaths.some(path => req.path.startsWith(path));
   if (shouldSkip) return next();
 
+  // Ignore CORS preflight requests
+  if (req.method === 'OPTIONS') return next();
+
   // Extract useful data from request
   const pathname = req.path;
   const userAgent = req.headers['user-agent'];
