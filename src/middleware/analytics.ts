@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../lib/prisma';
+import { prisma } from '../lib/prisma.js';
 
 // TypeScript workaround: AnalyticsEvent model may not be in generated types yet
 type PrismaAnalytics = typeof prisma & { analyticsEvent?: any };
