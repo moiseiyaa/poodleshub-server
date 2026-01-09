@@ -10,7 +10,7 @@ const createBlogSchema = z.object({
   excerpt: z.string().optional(),
   content: z.string().optional(),
   tags: z.array(z.string()).optional().default([]),
-  published: z.boolean().optional().default(false),
+  published: z.boolean().optional().default(true),
   publishedAt: z.string().optional()
 });
 
@@ -63,7 +63,7 @@ router.post('/', verifyAdminJWT, async (req, res) => {
         excerpt: data.excerpt || '',
         content: data.content || '',
         tags: data.tags || [],
-        published: data.published || false,
+        published: true,
         publishedAt: data.published ? new Date(data.publishedAt || Date.now()) : null,
         updatedAt: new Date()
       }
