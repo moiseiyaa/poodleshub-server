@@ -24,10 +24,13 @@ function verifyAdminJWT(req: any, res: any, next: any) {
   next();
 }
 
-// List blogs (public)
+// List blogs (public) - only return published blogs
 router.get('/', async (req, res) => {
   try {
-    const posts = await prisma.blog.findMany({ orderBy: { publishedAt: 'desc' } });
+    const posts = await prisma.blog.findMany({ 
+      where: { published: true },
+      orderBy: { publishedAt: 'desc' } 
+    });
     res.json({ data: posts });
   } catch (err: any) {
     console.error('Error fetching blogs:', err);
@@ -83,7 +86,20 @@ router.put('/:id', verifyAdminJWT, async (req, res) => {
     if (!existing) return res.status(404).json({ error: 'Blog post not found' });
 
     const merged: any = { ...existing, ...parsed };
-    if (merged.published && !merged.publishedAt) merged.publishedAt = new Date();
+    
+    // Set publishedAt only if published is true
+    let publishedAtValue: Date | null = null;
+    if (merged.published) {
+      if (parsed.publishedAt) {
+        publishedAtValue = new Date(parsed.publishedAt);
+      } else if (!existing.publishedAt) {
+        // Only set new date if it wasn't already published
+        publishedAtValue = new Date();
+      } else {
+        // Keep existing publishedAt if republishing
+        publishedAtValue = existing.publishedAt;
+      }
+    }
 
     const updated = await prisma.blog.update({
       where: { id },
@@ -93,8 +109,8 @@ router.put('/:id', verifyAdminJWT, async (req, res) => {
         excerpt: merged.excerpt,
         content: merged.content,
         tags: merged.tags || [],
-        published: merged.published,
-        publishedAt: merged.publishedAt ? new Date(merged.publishedAt) : null,
+        published: merged.published ?? false,
+        publishedAt: publishedAtValue,
         updatedAt: new Date()
       }
     });
