@@ -17,10 +17,13 @@ import blogRouter from './routes/blog.js';
 
 const app = express();
 
-const allowedOrigins = [
+const allowedOrigins: (string | RegExp)[] = [
   env.FRONTEND_URL,
   'https://puppyhubusa.com',
   'https://www.puppyhubusa.com',
+  // Accept any sub-domain like staging.puppyhubusa.com, blog.puppyhubusa.com, etc.
+  /^https?:\/\/([a-z0-9-]+\.)*puppyhubusa\.com$/,
+  // Local development
   'http://localhost:3000',
   'http://127.0.0.1:3000',
   'http://localhost:3001',
@@ -35,7 +38,10 @@ app.use(cors({
     console.log(`CORS request from origin: ${origin}`);
     console.log(`Allowed origins: ${JSON.stringify(allowedOrigins)}`);
     
-    if (!origin || allowedOrigins.includes(origin)) {
+    const isAllowed = !origin || allowedOrigins.some(o =>
+      typeof o === "string" ? o === origin : o.test(origin as string)
+    );
+    if (isAllowed) {
       callback(null, true);
     } else {
       console.warn(`Blocked CORS origin: ${origin}`);
@@ -55,7 +61,10 @@ app.use(express.urlencoded({ extended: true }));
 app.options('*', (req, res) => {
   const origin = req.headers.origin as string | undefined;
 
-  if (!origin || allowedOrigins.includes(origin)) {
+  const isAllowed = !origin || allowedOrigins.some(o =>
+      typeof o === "string" ? o === origin : o.test(origin as string)
+    );
+    if (isAllowed) {
     res.setHeader('Access-Control-Allow-Origin', origin || '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', req.headers['access-control-request-headers'] || 'Content-Type,Authorization');
