@@ -13,7 +13,7 @@ function verifyAdminJWT(req: any, res: any, next: any) {
 }
 
 // Import environment config using path alias
-import { env } from '@/config/env';
+import { env } from '../config/env.js';
 
 // Configure Cloudinary
 cloudinary.config({

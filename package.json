@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "PuppyHub USA Backend API",
   "main": "src/index.ts",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "npm install --include=dev && npx prisma generate && tsc",
