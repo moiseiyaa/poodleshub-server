@@ -14,6 +14,8 @@ import analyticsRouter from './routes/analytics.js';
 import exportRouter from './routes/export.js';
 import seoRouter from './routes/seo.js';
 import blogRouter from './routes/blog.js';
+import uploadRouter from './routes/upload.js';
+import path from 'path';
 
 const app = express();
 
@@ -29,6 +31,9 @@ const allowedOrigins: (string | RegExp)[] = [
   'http://localhost:3001',
   'http://127.0.0.1:3001'
 ];
+
+// Serve uploaded images
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Middleware
 app.use(cookieParser());
@@ -113,6 +118,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/testimonials', testimonialsRouter);
 app.use('/api/reviews', reviewsRouter);
 app.use('/api/analytics', analyticsRouter);
+app.use('/api/upload', uploadRouter);
 app.use('/api/export', exportRouter);
 app.use('/api/admin/seo', seoRouter);
 app.use('/api/seo', seoRouter);
