@@ -13,7 +13,7 @@ function verifyAdminJWT(req: any, res: any, next: any) {
 }
 
 // Import environment config
-import { env } from './config/env.js';
+import { env } from '../config/env';
 
 // Configure Cloudinary
 cloudinary.config({
