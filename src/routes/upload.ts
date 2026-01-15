@@ -28,10 +28,10 @@ if (!fs.existsSync(uploadDir)) {
 
 // Configure Multer storage
 const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
+  destination: (_req: express.Request, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
     cb(null, uploadDir);
   },
-  filename: (_req, file, cb) => {
+  filename: (_req: express.Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
     // Use timestamp + original extension for quick uniqueness
     const ext = path.extname(file.originalname);
     const base = Date.now().toString(36);
@@ -40,7 +40,7 @@ const storage = multer.diskStorage({
 });
 
 // Accept images only
-function fileFilter(_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) {
+const fileFilter: multer.Options['fileFilter'] = (_req, file, cb) => {
   const allowed = ['image/jpeg', 'image/png', 'image/webp'];
   if (allowed.includes(file.mimetype)) return cb(null, true);
   cb(new Error('Only jpeg, png, or webp images are allowed'));
@@ -55,7 +55,7 @@ const upload = multer({
 const router = express.Router();
 
 // Single image upload => returns public URL
-router.post('/', verifyAdminJWT, upload.single('image'), async (req, res) => {
+router.post('/', verifyAdminJWT, upload.single('image'), async (req: express.Request, res: express.Response) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
