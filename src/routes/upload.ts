@@ -55,9 +55,6 @@ router.post('/', verifyAdminJWT, upload.single('image'), async (req: express.Req
       // req.file.buffer contains the image
       stream.end(req.file.buffer);
     });
-      folder: 'puppyhub', // optional folder in Cloudinary
-      resource_type: 'image'
-    });
 
     return res.status(201).json({ url: result.secure_url, public_id: result.public_id });
   } catch (err: any) {
