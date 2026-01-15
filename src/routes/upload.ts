@@ -1,7 +1,6 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
 import { v2 as cloudinary } from 'cloudinary';
 
 // Simple JWT header check (same logic as other admin routes)
@@ -20,24 +19,8 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Local temp directory for initial file save (removed after upload)
-const uploadDir = path.join(process.cwd(), 'tmp_uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure Multer storage
-const storage = multer.diskStorage({
-  destination: (_req: express.Request, _file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {
-    cb(null, uploadDir);
-  },
-  filename: (_req: express.Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
-    // Use timestamp + original extension for quick uniqueness
-    const ext = path.extname(file.originalname);
-    const base = Date.now().toString(36);
-    cb(null, `${base}${ext}`);
-  }
-});
+// Use in-memory storage to stay compatible with read-only filesystems (e.g. Vercel)
+const storage = multer.memoryStorage();
 
 // Accept images only
 const fileFilter: multer.Options['fileFilter'] = (_req, file, cb) => {
@@ -61,13 +44,20 @@ router.post('/', verifyAdminJWT, upload.single('image'), async (req: express.Req
   }
 
   try {
-    const result = await cloudinary.uploader.upload(req.file.path, {
+    const result = await new Promise<cloudinary.UploadApiResponse>((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream({
+        folder: 'puppyhub',
+        resource_type: 'image'
+      }, (err, res) => {
+        if (err || !res) return reject(err || new Error('No response'));
+        resolve(res);
+      });
+      // req.file.buffer contains the image
+      stream.end(req.file.buffer);
+    });
       folder: 'puppyhub', // optional folder in Cloudinary
       resource_type: 'image'
     });
-
-    // Remove temp file
-    fs.unlink(req.file.path, () => {});
 
     return res.status(201).json({ url: result.secure_url, public_id: result.public_id });
   } catch (err: any) {
