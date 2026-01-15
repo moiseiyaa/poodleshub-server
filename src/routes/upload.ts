@@ -12,11 +12,14 @@ function verifyAdminJWT(req: any, res: any, next: any) {
   next();
 }
 
+// Import environment config
+import { env } from './config/env.js';
+
 // Configure Cloudinary
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  cloud_name: env.CLOUDINARY_CLOUD_NAME,
+  api_key: env.CLOUDINARY_API_KEY,
+  api_secret: env.CLOUDINARY_API_SECRET
 });
 
 // Use in-memory storage to stay compatible with read-only filesystems (e.g. Vercel)

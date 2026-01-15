@@ -14,6 +14,9 @@ interface EnvConfig {
   ADMIN_SECRET_KEY: string;
   ADMIN_EMAIL: string;
   FRONTEND_URL: string;
+  CLOUDINARY_CLOUD_NAME: string;
+  CLOUDINARY_API_KEY: string;
+  CLOUDINARY_API_SECRET: string;
 }
 
 function validateEnv(): EnvConfig {
@@ -27,6 +30,9 @@ function validateEnv(): EnvConfig {
     'ADMIN_SECRET_KEY',
     'ADMIN_EMAIL',
     'FRONTEND_URL',
+    'CLOUDINARY_CLOUD_NAME',
+    'CLOUDINARY_API_KEY',
+    'CLOUDINARY_API_SECRET',
   ];
 
   // Debug: Log all environment variables (without sensitive values)
@@ -55,6 +61,9 @@ function validateEnv(): EnvConfig {
     ADMIN_SECRET_KEY: process.env.ADMIN_SECRET_KEY!,
     ADMIN_EMAIL: process.env.ADMIN_EMAIL!,
     FRONTEND_URL: process.env.FRONTEND_URL!,
+    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME!,
+    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY!,
+    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET!,
   };
 }
 
