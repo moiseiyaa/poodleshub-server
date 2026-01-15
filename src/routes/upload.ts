@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 
 // Simple JWT header check (same logic as other admin routes)
 function verifyAdminJWT(req: any, res: any, next: any) {
@@ -44,7 +44,7 @@ router.post('/', verifyAdminJWT, upload.single('image'), async (req: express.Req
   }
 
   try {
-    const result = await new Promise<cloudinary.UploadApiResponse>((resolve, reject) => {
+    const result = await new Promise<UploadApiResponse>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream({
         folder: 'puppyhub',
         resource_type: 'image'
@@ -53,7 +53,7 @@ router.post('/', verifyAdminJWT, upload.single('image'), async (req: express.Req
         resolve(res);
       });
       // req.file.buffer contains the image
-      stream.end(req.file.buffer);
+      stream.end(req.file!.buffer);
     });
 
     return res.status(201).json({ url: result.secure_url, public_id: result.public_id });
