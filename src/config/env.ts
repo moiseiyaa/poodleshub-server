@@ -17,6 +17,8 @@ interface EnvConfig {
   CLOUDINARY_CLOUD_NAME: string;
   CLOUDINARY_API_KEY: string;
   CLOUDINARY_API_SECRET: string;
+  GA4_PROPERTY_ID?: string;
+  GOOGLE_SERVICE_ACCOUNT_KEY?: string;
 }
 
 function validateEnv(): EnvConfig {
@@ -33,6 +35,8 @@ function validateEnv(): EnvConfig {
     'CLOUDINARY_CLOUD_NAME',
     'CLOUDINARY_API_KEY',
     'CLOUDINARY_API_SECRET',
+    'GA4_PROPERTY_ID',
+    'GOOGLE_SERVICE_ACCOUNT_KEY',
   ];
 
   // Debug: Log all environment variables (without sensitive values)
