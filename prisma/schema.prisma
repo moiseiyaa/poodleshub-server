@@ -176,6 +176,8 @@ model Blog {
   title      String
   slug       String   @unique
   excerpt    String?
+  featuredImage String?
+  images     String[]
   content    String?
   tags       String[] @default([])
   published  Boolean  @default(false)
