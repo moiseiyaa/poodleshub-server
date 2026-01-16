@@ -36,7 +36,6 @@ function validateEnv(): EnvConfig {
     'CLOUDINARY_API_KEY',
     'CLOUDINARY_API_SECRET',
     'GA4_PROPERTY_ID',
-    'GOOGLE_SERVICE_ACCOUNT_KEY',
   ];
 
   // Debug: Log all environment variables (without sensitive values)
@@ -46,7 +45,11 @@ function validateEnv(): EnvConfig {
     console.log(`${key}: ${value ? '✅ SET' : '❌ MISSING'}`);
   });
 
-  const missing = required.filter((key) => !process.env[key]);
+  let missing = required.filter((key) => !process.env[key]);
+  // If SERVICE_ACCOUNT_KEY is missing but credentials file is set, that's acceptable
+  if (missing.includes('GOOGLE_SERVICE_ACCOUNT_KEY') && process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    missing = missing.filter((m) => m !== 'GOOGLE_SERVICE_ACCOUNT_KEY');
+  }
 
   if (missing.length > 0) {
     console.error('❌ Missing environment variables:', missing);
