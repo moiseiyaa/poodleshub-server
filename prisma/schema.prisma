@@ -205,3 +205,15 @@ model AnalyticsEvent {
   @@index([eventType])
   @@index([userId])
 }
+
+model WebVital {
+  id        String   @id @default(cuid())
+  url       String
+  lcp       Float
+  cls       Float
+  inp       Float
+  fetchedAt DateTime @default(now())
+
+  @@index([url])
+  @@index([fetchedAt])
+}

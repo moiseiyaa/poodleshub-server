@@ -13,6 +13,7 @@ import reviewsRouter from './routes/reviews.js';
 import analyticsRouter from './routes/analytics.js';
 import exportRouter from './routes/export.js';
 import seoRouter from './routes/seo.js';
+import webVitalsRouter from './routes/webVitals.js';
 import blogRouter from './routes/blog.js';
 import uploadRouter from './routes/upload.js';
 import path from 'path';
@@ -122,6 +123,7 @@ app.use('/api/upload', uploadRouter);
 app.use('/api/export', exportRouter);
 app.use('/api/admin/seo', seoRouter);
 app.use('/api/seo', seoRouter);
+app.use('/api/seo/web-vitals', webVitalsRouter);
 app.use('/api/admin/blog', blogRouter);
 app.use('/api/blog', blogRouter);
 
