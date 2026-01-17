@@ -48,6 +48,8 @@
   "devDependencies": {
     "@types/cookie-parser": "^1.4.3",
     "@types/multer": "^2.0.0",
+    "chrome-launcher": "^0.15.2",
+    "lighthouse": "^10.4.0",
     "prisma": "^5.8.0",
     "tsx": "^4.7.0"
   },
