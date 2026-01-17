@@ -1,46 +1,87 @@
-import { PsiOptions, output } from 'psi';
-import psi from 'psi';
+import 'dotenv/config';
+import { google } from 'googleapis';
 import { PrismaClient } from '@prisma/client';
 
+// Initialize PageSpeed Insights API
+const psi = google.pagespeedonline('v5');
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      PSI_API_KEY?: string;
+    }
+  }
+}
+
 /**
- * Collect Core Web Vitals using Google PageSpeed Insights API (psi package)
- * Usage: tsx scripts/collectWebVitalsPsi.ts https://example.com/
- * Optionally set PSI_API_KEY env variable for higher quota.
+ * Collect Core Web Vitals using Google PageSpeed Insights API
+ * Usage: tsx scripts/collectWebVitalsPsi.ts [url]
+ * Requires PSI_API_KEY in .env
  */
+async function getPageSpeedMetrics(url: string, apiKey: string) {
+  try {
+    const response = await psi.pagespeedapi.runpagespeed({
+      url,
+      key: apiKey,
+      strategy: 'mobile',
+      category: ['PERFORMANCE', 'ACCESSIBILITY', 'SEO', 'BEST_PRACTICES'],
+    });
+
+    const { data } = response;
+    const audits = data.lighthouseResult?.audits;
+    
+    if (!audits) {
+      throw new Error('No audit data in response');
+    }
+
+    return {
+      lcp: audits['largest-contentful-paint']?.numericValue || 0,
+      cls: audits['cumulative-layout-shift']?.numericValue || 0,
+      inp: audits['interaction-to-next-paint']?.numericValue || 0,
+          };
+  } catch (error) {
+    console.error('Error fetching PageSpeed Insights:', error.message);
+    throw error;
+  }
+}
+
 async function main() {
-  const url = process.argv[2] || 'https://puppyhubusa.com';
-  console.log(`Fetching PSI metrics for ${url}`);
-
-  const opts: PsiOptions = {
-    nokey: !process.env.PSI_API_KEY,
-    key: process.env.PSI_API_KEY,
-    strategy: 'mobile',
-  } as any;
-
-  const { data } = await psi(url, opts);
-  if (!data || !data.lighthouseResult) {
-    throw new Error('Invalid PSI response');
+  const apiKey = process.env.PSI_API_KEY;
+  if (!apiKey) {
+    throw new Error('PSI_API_KEY is required in .env');
   }
 
-  const audits = data.lighthouseResult.audits as any;
-  const lcp = audits['largest-contentful-paint']?.numericValue || 0;
-  const cls = audits['cumulative-layout-shift']?.numericValue || 0;
-  // INP is experimental; fallback to TBT if missing
-  const inp = audits['experimental_interaction_to_next_paint']?.numericValue || audits['total-blocking-time']?.numericValue || 0;
+  const url = process.argv[2] || 'https://puppyhubusa.com';
+  console.log(`🔍 Fetching metrics for: ${url}`);
 
-  const prisma = new PrismaClient();
-  await prisma.webVital.create({
-    data: {
-      url,
-      lcp,
-      cls,
-      inp,
-      fetchedAt: new Date(),
-    },
-  });
-  await prisma.$disconnect();
+  try {
+    const metrics = await getPageSpeedMetrics(url, apiKey);
+    console.log('📊 Metrics received:', metrics);
 
-  console.log('Saved WebVitals:', { lcp, cls, inp });
+    const prisma = new PrismaClient();
+    
+    // @ts-ignore - webVital model exists at runtime
+    await prisma.webVital.create({
+      data: {
+        url,
+        lcp: metrics.lcp,
+        cls: metrics.cls,
+        inp: metrics.inp,
+          fetchedAt: new Date(),
+      },
+    });
+    await prisma.$disconnect();
+
+    console.log('✅ Web Vitals saved to database');
+    console.log({
+      'Largest Contentful Paint (LCP)': `${metrics.lcp}ms`,
+      'Cumulative Layout Shift (CLS)': metrics.cls.toFixed(4),
+      'Interaction to Next Paint (INP)': `${metrics.inp}ms`,
+    });
+  } catch (error) {
+    console.error('❌ Error:', error.message);
+    process.exit(1);
+  }
 }
 
 main().catch((err) => {
