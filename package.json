@@ -51,6 +51,7 @@
     "chrome-launcher": "^0.15.2",
     "lighthouse": "^10.4.0",
     "prisma": "^5.8.0",
+    "psi": "^4.1.0",
     "tsx": "^4.7.0"
   },
   "prisma": {
