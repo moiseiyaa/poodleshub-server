@@ -26,6 +26,9 @@ const allowedOrigins: (string | RegExp)[] = [
   'https://www.puppyhubusa.com',
   // Accept any sub-domain like staging.puppyhubusa.com, blog.puppyhubusa.com, etc.
   /^https?:\/\/([a-z0-9-]+\.)*puppyhubusa\.com$/,
+  // Allow Vercel preview deployments
+  /^https?:\/\/([a-z0-9-]+)\.vercel\.app$/,
+  'https://pup-client-2r9q7pri1-moise-iyas-projects.vercel.app',
   // Local development
   'http://localhost:3000',
   'http://127.0.0.1:3000',
