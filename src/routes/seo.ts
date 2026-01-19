@@ -13,6 +13,43 @@ import { SeoValidationService } from '../services/seo-validation.service.js';
 const router = express.Router();
 const prisma = new PrismaClient();
 
+// GET /admin/seo/lighthouse - List latest Lighthouse audits
+router.get('/lighthouse', async (req, res) => {
+  try {
+    const limit = Number(req.query.limit) || 20;
+    // If a lighthouseAudit table exists return real data, otherwise empty array
+    if ((prisma as any).lighthouseAudit) {
+      const audits = await (prisma as any).lighthouseAudit.findMany({
+        orderBy: { fetchedAt: 'desc' },
+        take: limit,
+      });
+      return res.json(audits);
+    }
+    return res.json([]);
+  } catch (err) {
+    console.error('Error fetching Lighthouse audits:', err);
+    return res.status(500).json({ error: 'Failed to fetch Lighthouse audits' });
+  }
+});
+
+// GET /admin/seo/broken-links - List broken link reports
+router.get('/broken-links', async (req, res) => {
+  try {
+    const limit = Number(req.query.limit) || 50;
+    if ((prisma as any).brokenLink) {
+      const links = await (prisma as any).brokenLink.findMany({
+        orderBy: { checkedAt: 'desc' },
+        take: limit,
+      });
+      return res.json(links);
+    }
+    return res.json([]);
+  } catch (err) {
+    console.error('Error fetching broken links:', err);
+    return res.status(500).json({ error: 'Failed to fetch broken links' });
+  }
+});
+
 // GET /admin/seo - Get all SEO metadata
 router.get('/', async (req, res) => {
   try {
