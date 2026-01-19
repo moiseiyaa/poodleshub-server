@@ -480,6 +480,21 @@ router.get('/ga4/comprehensive', async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/analytics/events - latest events
+router.get('/events', async (req: Request, res: Response) => {
+  try {
+    const limit = parseInt(req.query.limit as string) || 50;
+    const events = await prisma.analyticsEvent.findMany({
+      orderBy: { timestamp: 'desc' },
+      take: limit,
+    });
+    res.json(events);
+  } catch (err) {
+    console.error('Error fetching events:', err);
+    res.status(500).json({ error: 'Failed to fetch events' });
+  }
+});
+
 // GET /api/analytics/page-views-by-day - daily page views for given timeframe
 router.get('/page-views-by-day', async (req: Request, res: Response) => {
   try {
