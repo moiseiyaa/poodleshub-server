@@ -480,5 +480,31 @@ router.get('/ga4/comprehensive', async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/analytics/page-views-by-day - daily page views for given timeframe
+router.get('/page-views-by-day', async (req: Request, res: Response) => {
+  try {
+    const days = parseInt(req.query.days as string) || 30;
+    const since = new Date();
+    since.setDate(since.getDate() - days);
+
+    // Raw query is faster for aggregation than Prisma client API
+    const result = await prisma.$queryRaw<any>`
+      SELECT DATE("timestamp") AS date,
+             COUNT(*)::int      AS count
+      FROM   "AnalyticsEvent"
+      WHERE  "eventType" = 'pageView'
+        AND  "timestamp" >= ${since}
+      GROUP  BY DATE("timestamp")
+      ORDER  BY date ASC;
+    `;
+
+    res.json(result);
+  } catch (err) {
+    /* eslint-disable no-console */
+    console.error('Error fetching page views by day:', err);
+    res.status(500).json({ error: 'Failed to fetch page views by day' });
+  }
+});
+
 export default router;
 
