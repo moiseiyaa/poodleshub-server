@@ -17,7 +17,7 @@ export const analyticsMiddleware = async (req: Request, res: Response, next: Nex
     '/api/admin',
     '/uploads',
     '/public'
-  ];
+  ]; // '/admin' removed so admin dashboard views are tracked
 
   const shouldSkip = skipPaths.some(path => req.path.startsWith(path));
   if (shouldSkip) return next();
