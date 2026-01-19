@@ -1,5 +1,6 @@
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
 import { google } from 'googleapis';
+import fs from 'fs';
 
 /**
  * Google Analytics 4 Data API Service
@@ -16,6 +17,7 @@ let analyticsAdmin: any = null;
 
 // Initialize GA4 client
 const initializeGA4Client = () => {
+  if (!isGA4Configured()) return null;
   if (analyticsDataClient) return analyticsDataClient;
 
   try {
@@ -56,10 +58,11 @@ const getPropertyId = (): string => {
  * Check if GA4 is properly configured
  */
 export const isGA4Configured = (): boolean => {
-  return !!(
-    process.env.GA4_PROPERTY_ID &&
-    (process.env.GOOGLE_APPLICATION_CREDENTIALS || process.env.GOOGLE_SERVICE_ACCOUNT_KEY)
-  );
+  if (!process.env.GA4_PROPERTY_ID) return false;
+  if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    return fs.existsSync(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+  }
+  return !!process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
 };
 
 /**
