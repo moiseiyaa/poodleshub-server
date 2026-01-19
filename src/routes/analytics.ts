@@ -50,6 +50,44 @@ router.get('/overview', async (_req: Request, res: Response) => {
 });
 
 /**
+ * GET /api/analytics/summary
+ * Return simple counts for dashboard (page views & visitors)
+ */
+router.get('/summary', async (req: Request, res: Response) => {
+  try {
+    const days = parseInt(req.query.days as string) || 30;
+    const since = new Date();
+    since.setDate(since.getDate() - days);
+
+    const total = await prisma.analyticsEvent.count({
+      where: { eventType: 'pageView', timestamp: { gte: since } },
+    });
+
+    const uniqueVisitors = await prisma.analyticsEvent.count({
+      // @ts-ignore
+    distinct: ['ip'] as any,
+      where: { eventType: 'pageView', timestamp: { gte: since } },
+    });
+
+    const singlePageVisitors: Array<{ count: bigint }> = await prisma.$queryRaw`
+      SELECT COUNT(*)::bigint AS count FROM (
+        SELECT "ip" FROM "AnalyticsEvent"
+        WHERE "eventType" = 'pageView' AND "timestamp" >= ${since}
+        GROUP BY "ip" HAVING COUNT(*) = 1
+      ) t;
+    `;
+    const bounceRate = uniqueVisitors
+      ? Number(singlePageVisitors[0]?.count || 0) / uniqueVisitors * 100
+      : 0;
+
+    res.json({ total, uniqueVisitors, bounceRate, avgSessionDuration: null });
+  } catch (err) {
+    console.error('Error fetching summary:', err);
+    res.status(500).json({ error: 'Failed to fetch summary' });
+  }
+});
+
+/**
  * GET /api/analytics/traffic
  * Return real-time traffic analytics (page views, visitors, conversion rate)
  * Query params: days (default 7)
